@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#16241F">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Davo Coach">
+<meta name="mobile-web-app-capable" content="yes">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<title>Davo · Recomposición</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Karla:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pizarron:#16241F;
+  --tabla:#1D2F28;
+  --tabla-alta:#263A32;
+  --tiza:#EDEAE0;
+  --tenue:#8FA398;
+  --marcador:#F2C14E;
+  --ok:#7BC96F;
+  --zafe:#F2C14E;
+  --mal:#E4572E;
+  --linea:rgba(237,234,224,.12);
+  --display:"Barlow Condensed", "Arial Narrow", Impact, sans-serif;
+  --texto:"Karla", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--pizarron);
+  color:var(--tiza);
+  font-family:var(--texto);
+  font-size:15px;
+  line-height:1.5;
+  padding:0 0 90px;
+  max-width:560px;
+  margin:0 auto;
+  min-height:100vh;
+}
+h1,h2,h3{margin:0;font-family:var(--display);font-weight:700;letter-spacing:.02em}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--marcador);outline-offset:2px}
+
+/* ---------- Encabezado ---------- */
+.tapa{padding:18px 18px 14px;border-bottom:1px solid var(--linea);position:relative}
+.eyebrow{font-family:var(--display);text-transform:uppercase;letter-spacing:.18em;font-size:12px;color:var(--tenue);display:flex;justify-content:space-between;align-items:center}
+.eyebrow button{background:none;border:none;color:var(--tenue);font-size:18px;padding:0 4px}
+.peso-fila{display:flex;align-items:baseline;gap:10px;margin-top:6px}
+.peso-num{font-family:var(--display);font-size:64px;line-height:.9;font-weight:700;font-variant-numeric:tabular-nums}
+.peso-un{font-family:var(--display);font-size:22px;color:var(--tenue)}
+.peso-delta{margin-left:auto;text-align:right;font-family:var(--display);font-size:20px;color:var(--ok);line-height:1.1}
+.peso-delta small{display:block;font-family:var(--texto);font-size:11px;color:var(--tenue);letter-spacing:.04em}
+.barra{height:8px;background:var(--tabla);border-radius:99px;margin-top:14px;overflow:hidden}
+.barra i{display:block;height:100%;background:var(--marcador);border-radius:99px;transition:width .5s ease}
+.barra-pie{display:flex;justify-content:space-between;font-size:12px;color:var(--tenue);margin-top:6px;font-variant-numeric:tabular-nums}
+
+/* ---------- Solapas ---------- */
+.solapas{display:flex;gap:0;border-bottom:1px solid var(--linea);position:sticky;top:0;background:var(--pizarron);z-index:10}
+.solapas button{flex:1;background:none;border:none;padding:13px 4px 11px;font-family:var(--display);text-transform:uppercase;letter-spacing:.12em;font-size:14px;color:var(--tenue);border-bottom:2px solid transparent}
+.solapas button[aria-selected="true"]{color:var(--tiza);border-bottom-color:var(--marcador)}
+
+.vista{display:none;padding:16px 18px}
+.vista.activa{display:block}
+.rotulo{font-family:var(--display);text-transform:uppercase;letter-spacing:.16em;font-size:12px;color:var(--tenue);margin:22px 0 10px}
+.rotulo:first-child{margin-top:4px}
+
+/* ---------- Bloques ---------- */
+.bloque{background:var(--tabla);border-radius:14px;padding:16px}
+.kcal-fila{display:flex;align-items:flex-end;gap:8px}
+.kcal-num{font-family:var(--display);font-size:52px;line-height:.85;font-variant-numeric:tabular-nums}
+.kcal-de{color:var(--tenue);font-family:var(--display);font-size:20px;padding-bottom:4px}
+.kcal-resto{margin-left:auto;text-align:right;font-size:12px;color:var(--tenue)}
+.kcal-resto b{display:block;font-family:var(--display);font-size:24px;color:var(--tiza)}
+.macros{display:flex;gap:8px;margin-top:14px}
+.macro{flex:1}
+.macro span{font-size:11px;color:var(--tenue);letter-spacing:.06em;text-transform:uppercase}
+.macro b{display:block;font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums}
+.macro i{display:block;height:4px;border-radius:2px;background:var(--linea);margin-top:4px;position:relative;overflow:hidden}
+.macro i em{position:absolute;inset:0 auto 0 0;background:var(--tenue);border-radius:2px}
+
+.acciones{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.acc{background:var(--tabla);border:1px solid var(--linea);border-radius:12px;padding:14px 10px;text-align:left;line-height:1.25}
+.acc b{display:block;font-family:var(--display);font-size:17px;letter-spacing:.03em}
+.acc span{font-size:11px;color:var(--tenue)}
+.acc.principal{background:var(--marcador);color:#16241F;border-color:var(--marcador)}
+.acc.principal span{color:rgba(22,36,31,.7)}
+
+.comida{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--linea)}
+.comida:last-child{border-bottom:none}
+.comida-desc{flex:1}
+.comida-desc b{font-weight:600}
+.comida-desc span{display:block;font-size:12px;color:var(--tenue)}
+.comida-kcal{font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums}
+.comida button{background:none;border:none;color:var(--tenue);font-size:15px;padding:0 2px}
+.vacio{color:var(--tenue);font-size:13px;padding:14px 0}
+
+/* ---------- Calendario ---------- */
+.mes-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mes-nav button{background:var(--tabla);border:none;border-radius:8px;width:34px;height:34px;color:var(--tiza)}
+.mes-nav h3{font-size:22px;text-transform:uppercase;letter-spacing:.08em}
+.grilla{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.dow{text-align:center;font-size:10px;color:var(--tenue);text-transform:uppercase;letter-spacing:.08em;padding-bottom:2px}
+.dia{aspect-ratio:1;border-radius:9px;border:1px solid var(--linea);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--display);font-size:16px;color:var(--tenue);padding:0;position:relative}
+.dia.dentro{color:var(--tiza)}
+.dia.fuera{opacity:.25}
+.dia.hoy{border-color:var(--tiza);border-width:2px}
+.dia.bien{background:var(--ok);color:#16241F;border-color:transparent;font-weight:700}
+.dia.zafe{background:var(--zafe);color:#16241F;border-color:transparent;font-weight:700}
+.dia.mal{background:var(--mal);color:#fff;border-color:transparent;font-weight:700}
+.dia u{position:absolute;bottom:4px;width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.6}
+.leyenda{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--tenue)}
+.leyenda i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+/* ---------- Tira de 6 meses (firma) ---------- */
+.tira-marco{overflow-x:auto;padding-bottom:6px}
+.tira{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,10px);gap:3px;min-width:min-content}
+.tira b{width:10px;height:10px;border-radius:2px;background:var(--linea)}
+.tira b.bien{background:var(--ok)}
+.tira b.zafe{background:var(--zafe)}
+.tira b.mal{background:var(--mal)}
+.tira b.hoy{box-shadow:0 0 0 1.5px var(--tiza)}
+.tira b.futuro{background:rgba(237,234,224,.05)}
+.tira-meses{display:flex;font-size:10px;color:var(--tenue);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;min-width:min-content}
+
+/* ---------- Progreso ---------- */
+.cifras{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cifra{background:var(--tabla);border-radius:12px;padding:13px 14px}
+.cifra b{display:block;font-family:var(--display);font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.cifra span{font-size:11px;color:var(--tenue);text-transform:uppercase;letter-spacing:.08em}
+.cifra em{font-style:normal;font-size:12px;color:var(--tenue);display:block;margin-top:4px}
+.grafico{background:var(--tabla);border-radius:14px;padding:14px 10px 8px}
+.grafico svg{width:100%;height:170px;display:block;overflow:visible}
+
+/* ---------- Chat ---------- */
+.chat{display:flex;flex-direction:column;gap:9px;min-height:44vh;padding-bottom:8px}
+.msj{padding:11px 14px;border-radius:14px;max-width:88%;white-space:pre-wrap;word-wrap:break-word;font-size:14.5px}
+.msj.yo{background:var(--tabla-alta);align-self:flex-end;border-bottom-right-radius:4px}
+.msj.coach{background:var(--tabla);align-self:flex-start;border-bottom-left-radius:4px}
+.msj.nota{align-self:center;background:none;color:var(--tenue);font-size:12px;padding:2px}
+.escribir{position:fixed;bottom:0;left:0;right:0;background:var(--pizarron);border-top:1px solid var(--linea);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;max-width:560px;margin:0 auto}
+.escribir input{flex:1;background:var(--tabla);border:1px solid var(--linea);border-radius:22px;padding:11px 16px;color:var(--tiza);font-size:15px;outline:none;min-width:0}
+.escribir button{background:var(--marcador);color:#16241F;border:none;border-radius:22px;padding:0 18px;font-family:var(--display);font-size:16px;letter-spacing:.06em;text-transform:uppercase;font-weight:700}
+.escribir button:disabled{opacity:.45}
+
+/* ---------- Hoja inferior / ajustes ---------- */
+.fondo{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:40}
+.fondo.abierto{display:block}
+.hoja{position:fixed;left:0;right:0;bottom:0;background:var(--tabla);border-radius:18px 18px 0 0;padding:18px 18px calc(24px + env(safe-area-inset-bottom));z-index:41;max-width:560px;margin:0 auto;transform:translateY(101%);transition:transform .25s ease;max-height:88vh;overflow-y:auto}
+.hoja.abierta{transform:translateY(0)}
+.hoja h3{font-size:22px;margin-bottom:2px}
+.hoja .sub{color:var(--tenue);font-size:12px;margin-bottom:14px}
+.estados{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.estados button{border:1px solid var(--linea);background:transparent;border-radius:12px;padding:12px 6px;font-family:var(--display);font-size:15px;letter-spacing:.04em;line-height:1.2}
+.estados button[data-sel="1"]{border-color:transparent;font-weight:700}
+.estados button[data-e="bien"][data-sel="1"]{background:var(--ok);color:#16241F}
+.estados button[data-e="zafe"][data-sel="1"]{background:var(--zafe);color:#16241F}
+.estados button[data-e="mal"][data-sel="1"]{background:var(--mal);color:#fff}
+.campo{margin-bottom:12px}
+.campo label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--tenue);margin-bottom:5px}
+.campo input,.campo textarea,.campo select{width:100%;background:var(--pizarron);border:1px solid var(--linea);border-radius:10px;padding:11px 13px;color:var(--tiza);font-family:inherit;font-size:15px;outline:none}
+.campo textarea{min-height:64px;resize:vertical}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cerrar{width:100%;background:var(--marcador);color:#16241F;border:none;border-radius:12px;padding:13px;font-family:var(--display);font-size:17px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-top:4px}
+.link{background:none;border:none;color:var(--tenue);text-decoration:underline;font-size:13px;padding:8px 0}
+.aviso{background:rgba(228,87,46,.15);border:1px solid rgba(228,87,46,.4);border-radius:12px;padding:12px 14px;font-size:13px;margin-bottom:14px}
+.aviso b{display:block;font-family:var(--display);font-size:16px;letter-spacing:.04em;margin-bottom:3px}
+/* ---------- Momento del día ---------- */
+.momento{background:var(--tabla);border-left:3px solid var(--marcador);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.momento .cuando{font-family:var(--display);text-transform:uppercase;letter-spacing:.14em;font-size:12px;color:var(--marcador)}
+.momento p{margin:5px 0 11px;font-size:14px;line-height:1.45}
+.fila-btn{display:flex;gap:8px;flex-wrap:wrap}
+.mini{background:transparent;border:1px solid var(--linea);border-radius:20px;padding:8px 14px;font-family:var(--display);font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--tiza)}
+.mini.lleno{background:var(--marcador);color:#16241F;border-color:var(--marcador);font-weight:700}
+
+/* ---------- Entreno ---------- */
+.entreno-tapa{display:flex;align-items:baseline;gap:8px}
+.entreno-tapa h3{font-size:28px;text-transform:uppercase;letter-spacing:.03em}
+.entreno-tapa span{color:var(--tenue);font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin-left:auto}
+.switch{display:flex;background:var(--pizarron);border-radius:10px;padding:3px;margin:12px 0 6px}
+.switch button{flex:1;background:none;border:none;padding:9px;border-radius:8px;font-family:var(--display);font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--tenue)}
+.switch button[data-on="1"]{background:var(--tabla-alta);color:var(--tiza)}
+.ej{display:flex;gap:11px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--linea)}
+.ej:last-child{border-bottom:none}
+.ej .tick{width:25px;height:25px;border-radius:7px;border:1px solid var(--linea);background:transparent;flex:none;font-size:13px;color:#16241F;padding:0}
+.ej .tick[data-ok="1"]{background:var(--ok);border-color:var(--ok)}
+.ej-txt{flex:1}
+.ej-txt b{font-weight:600;font-size:14.5px}
+.ej-txt span{display:block;font-size:12px;color:var(--tenue);margin-top:2px}
+.ficha{background:var(--tabla);border-radius:12px;padding:14px 16px;margin-bottom:8px}
+.ficha h4{margin:0 0 5px;font-family:var(--display);font-size:20px;letter-spacing:.03em}
+.ficha p{margin:0;font-size:13.5px;white-space:pre-wrap}
+.ficha .pie{margin-top:11px;display:flex;gap:8px;align-items:center}
+.ficha a{color:var(--marcador);font-size:12px;text-decoration:none;border:1px solid var(--linea);padding:7px 13px;border-radius:20px}
+.voz{background:var(--tabla);border:1px solid var(--linea);border-radius:50%;width:44px;height:44px;flex:none;font-size:19px;color:var(--tiza);padding:0}
+.voz.grabando{background:var(--mal);border-color:var(--mal);animation:latir 1.1s infinite}
+@keyframes latir{50%{opacity:.5}}
+.brindis{position:fixed;left:14px;right:14px;bottom:24px;max-width:532px;margin:0 auto;background:var(--tabla-alta);border-radius:14px;padding:15px 18px;z-index:60;box-shadow:0 8px 28px rgba(0,0,0,.45);transform:translateY(140%);transition:transform .28s cubic-bezier(.2,.9,.3,1.2);border-left:3px solid var(--marcador)}
+.brindis.arriba{transform:translateY(0)}
+.brindis.bien{border-left-color:var(--ok)}
+.brindis.mal{border-left-color:var(--mal)}
+.brindis b{display:block;font-family:var(--display);font-size:21px;letter-spacing:.03em;margin-bottom:3px}
+.brindis span{font-size:13.5px;color:var(--tenue);line-height:1.45}
+/* ---------- Alimentos y recetas ---------- */
+.buscador{width:100%;background:var(--pizarron);border:1px solid var(--linea);border-radius:10px;padding:11px 13px;color:var(--tiza);font-family:inherit;font-size:15px;outline:none;margin-bottom:10px}
+.item{display:flex;gap:10px;align-items:center;padding:12px 4px;border-bottom:1px solid var(--linea);cursor:pointer}
+.item:active{background:var(--tabla-alta)}
+.item:last-child{border-bottom:none}
+.item-txt{flex:1;min-width:0}
+.item-txt b{font-weight:600;font-size:14.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-txt span{font-size:12px;color:var(--tenue)}
+.item .toca{font-family:var(--display);font-size:11px;color:var(--marcador);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.item .lapiz{background:var(--pizarron);border:1px solid var(--linea);border-radius:8px;color:var(--tenue);font-size:14px;padding:6px 9px;flex:none}
+.lista-scroll{max-height:46vh;overflow-y:auto;margin-bottom:12px}
+.reparto{font-size:13px;color:var(--tenue);margin-top:8px;padding-top:9px;border-top:1px solid var(--linea)}
+.reparto b{color:var(--tiza)}
+.macro b em{font-style:normal;color:var(--tenue);font-size:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="tapa">
+  <div class="eyebrow">
+    <span>Recomposición · Davo</span>
+    <button onclick="abrirAjustes()" aria-label="Ajustes">⚙</button>
+  </div>
+  <div class="peso-fila">
+    <span class="peso-num" id="pesoActual">—</span>
+    <span class="peso-un">kg</span>
+    <span class="peso-delta"><span id="pesoDelta">—</span><small id="pesoFecha">sin pesajes</small></span>
+  </div>
+  <div class="barra"><i id="barraProg" style="width:0%"></i></div>
+  <div class="barra-pie"><span id="pieIzq">—</span><span id="pieDer">—</span></div>
+</header>
+
+<nav class="solapas" role="tablist">
+  <button role="tab" aria-selected="true" onclick="verVista('hoy',this)">Hoy</button>
+  <button role="tab" aria-selected="false" onclick="verVista('entreno',this)">Entreno</button>
+  <button role="tab" aria-selected="false" onclick="verVista('cal',this)">Días</button>
+  <button role="tab" aria-selected="false" onclick="verVista('prog',this)">Progreso</button>
+  <button role="tab" aria-selected="false" onclick="verVista('coach',this)">Coach</button>
+</nav>
+
+<!-- ================= HOY ================= -->
+<section class="vista activa" id="v-hoy">
+  <div id="avisoClave"></div>
+  <div class="momento" id="momento"></div>
+  <div class="bloque">
+    <div class="kcal-fila">
+      <span class="kcal-num" id="kcalHoy">0</span>
+      <span class="kcal-de">/ <span id="kcalTope">2600</span></span>
+      <span class="kcal-resto"><b id="kcalResto">2600</b>te quedan</span>
+    </div>
+    <div class="barra" style="margin-top:12px"><i id="barraKcal" style="width:0%"></i></div>
+    <div class="macros">
+      <div class="macro"><span>Proteína</span><b id="mProt">0 <em>/ 190 g</em></b><i><em id="bProt"></em></i></div>
+      <div class="macro"><span>Carbos</span><b id="mCarb">0 <em>/ 0 g</em></b><i><em id="bCarb"></em></i></div>
+      <div class="macro"><span>Grasas</span><b id="mGras">0 <em>/ 0 g</em></b><i><em id="bGras"></em></i></div>
+    </div>
+    <div class="reparto" id="reparto"></div>
+  </div>
+
+  <div class="acciones">
+    <button class="acc principal" onclick="abrirAlimentos()"><b>⚖️ Pesar y anotar</b><span>Exacto, por gramos</span></button>
+    <label class="acc" style="cursor:pointer">
+      <b>📸 Sacar foto</b><span>Estimación rápida</span>
+      <input type="file" id="archivoFoto" accept="image/*" capture="environment" onchange="mandarFoto()" style="display:none">
+    </label>
+    <button class="acc" onclick="abrirRecetas()"><b>📖 Mis recetas</b><span>Humita, guisos, tartas</span></button>
+    <button class="acc" onclick="anotarComida()"><b>✍️ Describir</b><span>Que lo estime la IA</span></button>
+    <button class="acc" onclick="registrarPeso()"><b>⚖️ Pesarme</b><span>Actualiza el progreso</span></button>
+    <button class="acc" onclick="abrirDia(hoyISO())"><b>✅ Cerrar el día</b><span>Marcá cómo te fue</span></button>
+  </div>
+
+  <div class="rotulo">Lo que comiste hoy</div>
+  <div class="bloque" id="listaComidas"></div>
+
+  <button class="acc" style="width:100%;margin-top:10px" onclick="pedirCompensar()"><b>🔥 Me pasé, ¿cómo lo arreglo?</b><span>El coach te arma la vuelta</span></button>
+</section>
+
+<!-- ================= ENTRENO ================= -->
+<section class="vista" id="v-entreno">
+  <div class="bloque" id="rutinaHoy"></div>
+
+  <div class="acciones" style="margin-top:10px">
+    <label class="acc principal" style="cursor:pointer">
+      <b>📸 ¿Qué es esta máquina?</b><span>Te digo cómo se usa</span>
+      <input type="file" id="archivoMaquina" accept="image/*" capture="environment" onchange="mandarMaquina()" style="display:none">
+    </label>
+    <label class="acc" style="cursor:pointer">
+      <b>📋 Cargar mi rutina</b><span>Foto del papel del profe</span>
+      <input type="file" id="archivoRutina" accept="image/*" onchange="mandarRutina()" style="display:none">
+    </label>
+    <button class="acc" onclick="registrarCaminata()"><b>🚶 Caminata</b><span>Anotá los pasos de hoy</span></button>
+    <button class="acc" onclick="generarCaseras()"><b>🏠 Versión casera</b><span>Que arme la de casa</span></button>
+    <button class="acc" onclick="editarRutina()"><b>✏️ Editar a mano</b><span>Cambiá los ejercicios</span></button>
+  </div>
+
+  <div class="rotulo">Tus máquinas guardadas</div>
+  <div id="listaFichas"></div>
+</section>
+
+<!-- ================= CALENDARIO ================= -->
+<section class="vista" id="v-cal">
+  <div class="mes-nav">
+    <button onclick="moverMes(-1)" aria-label="Mes anterior">‹</button>
+    <h3 id="tituloMes">—</h3>
+    <button onclick="moverMes(1)" aria-label="Mes siguiente">›</button>
+  </div>
+  <div class="grilla" id="grillaDow"></div>
+  <div class="grilla" id="grillaDias" style="margin-top:5px"></div>
+  <div class="leyenda">
+    <span><i style="background:var(--ok)"></i>Cumplí</span>
+    <span><i style="background:var(--zafe)"></i>Zafé</span>
+    <span><i style="background:var(--mal)"></i>Me mandé</span>
+    <span><i style="background:transparent;border:1px solid var(--linea)"></i>Sin marcar</span>
+  </div>
+
+  <div class="rotulo">Los 6 meses completos</div>
+  <div class="tira-marco">
+    <div class="tira-meses" id="tiraMeses"></div>
+    <div class="tira" id="tira"></div>
+  </div>
+  <div class="barra-pie" style="margin-top:10px"><span id="tiraIzq">—</span><span id="tiraDer">—</span></div>
+</section>
+
+<!-- ================= PROGRESO ================= -->
+<section class="vista" id="v-prog">
+  <div class="cifras">
+    <div class="cifra"><span>Bajaste</span><b id="cBajado">—</b><em id="cBajadoSub">—</em></div>
+    <div class="cifra"><span>Te falta</span><b id="cFalta">—</b><em id="cFaltaSub">—</em></div>
+    <div class="cifra"><span>Ritmo real</span><b id="cRitmo">—</b><em>kg por semana</em></div>
+    <div class="cifra"><span>Ritmo necesario</span><b id="cNecesario">—</b><em>para llegar en fecha</em></div>
+  </div>
+
+  <div class="rotulo">Peso vs. plan</div>
+  <div class="grafico"><svg id="svgPeso" viewBox="0 0 320 170" preserveAspectRatio="none"></svg></div>
+
+  <div class="rotulo">Constancia</div>
+  <div class="cifras">
+    <div class="cifra"><span>Racha</span><b id="cRacha">0</b><em>días seguidos sin mandarte</em></div>
+    <div class="cifra"><span>Últimos 30 días</span><b id="cCumpli">0</b><em id="cCumpliSub">días cumplidos</em></div>
+  </div>
+  <div class="bloque" style="margin-top:8px" id="resumenSemana"></div>
+</section>
+
+<!-- ================= COACH ================= -->
+<section class="vista" id="v-coach">
+  <div class="chat" id="chat"></div>
+</section>
+
+<div class="escribir" id="barraEscribir" style="display:none">
+  <button class="voz" id="btnVoz" onclick="dictar()" aria-label="Dictar">🎙</button>
+  <input type="text" id="entrada" placeholder="Escribí o dictá..." onkeypress="if(event.key==='Enter')mandarTexto()">
+  <button id="btnEnviar" onclick="mandarTexto()">Enviar</button>
+</div>
+
+<!-- Hoja inferior -->
+<div class="fondo" id="fondo" onclick="cerrarHoja()"></div>
+<div class="hoja" id="hoja"></div>
+<div class="brindis" id="brindis"></div>
+
+<script>
+/* ============ ALMACENAMIENTO ============ */
+const CLAVE_LS = 'davoCoach.v1';
+
+/* Vacío a propósito: esta copia se publica en internet y la clave no puede ir acá,
+   porque cualquiera podría leerla y gastar tu cuota. La clave se pega una sola vez
+   desde Ajustes ⚙ en el teléfono y queda guardada solo en ese teléfono. */
+const CLAVE_API = '';
+
+/* Client ID de Google para sincronizar con Drive. Vacío = la sincronización
+   queda apagada y todo funciona igual que antes, solo guardado en el teléfono.
+   Instrucciones para conseguir el tuyo: pedíselas a la app, están más abajo. */
+const DRIVE_CLIENT_ID = '';
+const DRIVE_ARCHIVO = 'davo-coach-datos.json';
+
+/* Rutina base de 4 días de fuerza + caminatas. 0 = domingo. Editable desde la app. */
+const RUTINA_BASE = {
+  1:{nombre:'Pecho y espalda', ejercicios:[
+    {gym:'Press plano con barra', casa:'Flexiones (manos en la mesada si hace falta)', series:'4 × 8-10'},
+    {gym:'Jalón al pecho', casa:'Remo invertido debajo de una mesa firme', series:'4 × 10'},
+    {gym:'Press inclinado con mancuernas', casa:'Flexiones con las manos elevadas en una silla', series:'3 × 10'},
+    {gym:'Remo en polea baja', casa:'Remo con mochila cargada, apoyado en el respaldo', series:'3 × 12'}]},
+  2:{nombre:'Piernas', ejercicios:[
+    {gym:'Prensa 45°', casa:'Sentadilla a la silla: bajás hasta tocar y subís', series:'4 × 12'},
+    {gym:'Sentadilla o hack', casa:'Búlgara con el pie de atrás en el sillón', series:'3 × 10 por pierna'},
+    {gym:'Camilla femoral', casa:'Peso muerto rumano con mochila cargada', series:'3 × 12'},
+    {gym:'Gemelos en máquina', casa:'Elevación de talones en un escalón', series:'4 × 15'}]},
+  3:{nombre:'Caminata larga', ejercicios:[
+    {gym:'10.000 pasos', casa:'10.000 pasos', series:'—'}]},
+  4:{nombre:'Brazos y hombros', ejercicios:[
+    {gym:'Press militar con mancuernas', casa:'Press de hombros con dos bidones de 5 L', series:'4 × 10'},
+    {gym:'Curl con barra', casa:'Curl con mochila cargada de libros', series:'3 × 12'},
+    {gym:'Tríceps en polea', casa:'Fondos en el borde de una silla', series:'3 × 12'},
+    {gym:'Elevaciones laterales', casa:'Laterales con botellas de 1,5 L', series:'3 × 15'}]},
+  5:{nombre:'Piernas y core', ejercicios:[
+    {gym:'Peso muerto o hip thrust', casa:'Puente de glúteos con mochila en la cadera', series:'4 × 10'},
+    {gym:'Zancadas caminando', casa:'Zancadas en el pasillo', series:'3 × 10 por pierna'},
+    {gym:'Extensión de cuádriceps', casa:'Sentadilla isométrica contra la pared', series:'3 × 40 seg'},
+    {gym:'Plancha', casa:'Plancha', series:'3 × 30-45 seg'}]},
+  6:{nombre:'Caminata', ejercicios:[{gym:'10.000 pasos', casa:'10.000 pasos', series:'—'}]},
+  0:{nombre:'Descanso', ejercicios:[{gym:'Caminata suave y estirar', casa:'Caminata suave y estirar', series:'—'}]}
+};
+
+/* Valores por cada 100 g. Son de referencia: la etiqueta del paquete manda.
+   Todos se pueden editar desde la app. */
+const ALIMENTOS_BASE = {
+  'Pan francés':            {kcal:275, prot:9,    carb:55,  gras:1.5, u:'rodaja', ug:30},
+  'Pan lactal':             {kcal:265, prot:9,    carb:49,  gras:3.2, u:'rodaja', ug:28},
+  'Fideos secos (crudos)':  {kcal:360, prot:12,   carb:72,  gras:1.5},
+  'Fideos cocidos':         {kcal:130, prot:4.5,  carb:26,  gras:0.6},
+  'Arroz crudo':            {kcal:355, prot:7,    carb:78,  gras:0.7},
+  'Arroz cocido':           {kcal:128, prot:2.5,  carb:28,  gras:0.2},
+  'Papa cruda':             {kcal:77,  prot:2,    carb:17,  gras:0.1},
+  'Puré de papa':           {kcal:105, prot:2,    carb:15,  gras:4},
+  'Carne picada común':     {kcal:245, prot:18,   carb:0,   gras:19},
+  'Carne picada magra':     {kcal:165, prot:20,   carb:0,   gras:9},
+  'Nalga / bife magro':     {kcal:145, prot:22,   carb:0,   gras:6},
+  'Asado / tira':           {kcal:290, prot:18,   carb:0,   gras:24},
+  'Bondiola de cerdo':      {kcal:230, prot:19,   carb:0,   gras:17},
+  'Carré de cerdo magro':   {kcal:150, prot:22,   carb:0,   gras:6},
+  'Milanesa de carne frita':{kcal:265, prot:18,   carb:15,  gras:15},
+  'Huevo':                  {kcal:143, prot:12.6, carb:0.7, gras:9.5, u:'huevo', ug:55},
+  'Leche entera':           {kcal:61,  prot:3.2,  carb:4.8, gras:3.3},
+  'Leche descremada':       {kcal:35,  prot:3.4,  carb:5,   gras:0.1},
+  'Yogur natural descremado':{kcal:45, prot:4.5,  carb:6,   gras:0.2},
+  'Queso port salut':       {kcal:320, prot:22,   carb:1.5, gras:25},
+  'Queso untable descremado':{kcal:130,prot:11,   carb:4,   gras:7},
+  'Ricota':                 {kcal:165, prot:11,   carb:3,   gras:12},
+  'Lentejas cocidas':       {kcal:116, prot:9,    carb:20,  gras:0.4},
+  'Humita en olla':         {kcal:130, prot:4,    carb:17,  gras:5},
+  'Empanada de carne':      {kcal:250, prot:9,    carb:26,  gras:12, u:'empanada', ug:110},
+  'Aceite':                 {kcal:884, prot:0,    carb:0,   gras:100, u:'cucharada', ug:10},
+  'Azúcar':                 {kcal:400, prot:0,    carb:100, gras:0,  u:'cucharadita', ug:5},
+  'Dulce de leche':         {kcal:315, prot:6,    carb:55,  gras:7,  u:'cucharada', ug:20},
+  'Banana':                 {kcal:89,  prot:1.1,  carb:23,  gras:0.3, u:'unidad', ug:120},
+  'Manzana':                {kcal:52,  prot:0.3,  carb:14,  gras:0.2, u:'unidad', ug:180}
+};
+
+const POR_DEFECTO = () => ({
+  cfg:{ pesoInicial:131, pesoObjetivo:110, fechaInicio:hoyISO(), meses:6, kcalTope:2600, altura:1.86,
+        protObjetivo:190, carbObjetivo:0, grasObjetivo:0, factorPaso:0.00055, equipoCasa:'',
+        apiKey:CLAVE_API, modelo:'gemini-3.6-flash' },
+  pesos:{}, dias:{}, comidas:{}, chat:[],
+  rutina:JSON.parse(JSON.stringify(RUTINA_BASE)), entrenos:{}, fichas:{},
+  alimentos:JSON.parse(JSON.stringify(ALIMENTOS_BASE)), recetas:{}
+});
+let db = cargar();
+let mesVisible = new Date();
+let ocupado = false;
+
+function cargar(){
+  try{
+    const crudo = localStorage.getItem(CLAVE_LS);
+    if(crudo){
+      const d = JSON.parse(crudo);
+      const base = POR_DEFECTO();
+      const salida = Object.assign(base, d, {cfg:Object.assign(base.cfg, d.cfg||{})});
+      if(!salida.cfg.apiKey) salida.cfg.apiKey = CLAVE_API;
+      return salida;
+    }
+  }catch(e){ console.warn('No pude leer los datos guardados', e); }
+  return POR_DEFECTO();
+}
+function guardar(){
+  db._sync = Object.assign({}, db._sync, {ultima: new Date().toISOString()});
+  try{ localStorage.setItem(CLAVE_LS, JSON.stringify(db)); }
+  catch(e){ alert('No se pudieron guardar los datos en este dispositivo. Abrí el archivo desde el almacenamiento del teléfono, no desde una ventana privada.'); }
+  programarSubidaDrive();
+}
+
+/* ============ FECHAS ============ */
+function dosDig(n){ return String(n).padStart(2,'0'); }
+function aISO(d){ return d.getFullYear()+'-'+dosDig(d.getMonth()+1)+'-'+dosDig(d.getDate()); }
+function hoyISO(){ return aISO(new Date()); }
+function deISO(s){ const [a,m,d]=s.split('-').map(Number); return new Date(a,m-1,d); }
+function sumarDias(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function sumarMeses(d,n){ const x=new Date(d); x.setMonth(x.getMonth()+n); return x; }
+function difDias(a,b){ return Math.round((b-a)/86400000); }
+function fechaCorta(s){ const d=deISO(s); return d.getDate()+'/'+(d.getMonth()+1); }
+const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES3=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function fechaObjetivo(){ return sumarMeses(deISO(db.cfg.fechaInicio), Number(db.cfg.meses)||6); }
+
+/* ============ CÁLCULOS ============ */
+function pesosOrdenados(){ return Object.keys(db.pesos).sort().map(f=>({f, kg:Number(db.pesos[f])})); }
+function ultimoPeso(){ const p=pesosOrdenados(); return p.length ? p[p.length-1] : null; }
+function pesoHoy(){ const u=ultimoPeso(); return u ? u.kg : Number(db.cfg.pesoInicial); }
+function objetivos(){
+  const kcal=Number(db.cfg.kcalTope)||2600;
+  const prot=Number(db.cfg.protObjetivo)||190;
+  const gras=Number(db.cfg.grasObjetivo)||Math.round(kcal*0.27/9);
+  const carb=Number(db.cfg.carbObjetivo)||Math.max(0, Math.round((kcal - prot*4 - gras*9)/4));
+  return {kcal, prot, carb, gras};
+}
+function totalDia(f){
+  const items = db.comidas[f]||[];
+  return items.reduce((a,c)=>({kcal:a.kcal+(+c.kcal||0), prot:a.prot+(+c.prot||0), carb:a.carb+(+c.carb||0), gras:a.gras+(+c.gras||0)}), {kcal:0,prot:0,carb:0,gras:0});
+}
+function racha(){
+  let n=0, d=new Date();
+  for(let i=0;i<400;i++){
+    const f=aISO(d), e=(db.dias[f]||{}).estado;
+    if(i===0 && !e){ d=sumarDias(d,-1); continue; }
+    if(e==='bien'||e==='zafe'){ n++; d=sumarDias(d,-1); } else break;
+  }
+  return n;
+}
+
+/* ============ PINTAR ============ */
+function pintarTodo(){ pintarTapa(); pintarMomento(); pintarHoy(); pintarEntreno(); pintarFichas(); pintarCalendario(); pintarTira(); pintarProgreso(); pintarAvisoClave(); }
+
+function pintarTapa(){
+  const act=pesoHoy(), ini=Number(db.cfg.pesoInicial), obj=Number(db.cfg.pesoObjetivo);
+  document.getElementById('pesoActual').textContent = act.toFixed(1).replace('.',',');
+  const baj = ini-act;
+  const del = document.getElementById('pesoDelta');
+  del.textContent = (baj>=0?'−':'+') + Math.abs(baj).toFixed(1).replace('.',',') + ' kg';
+  del.style.color = baj>=0 ? 'var(--ok)' : 'var(--mal)';
+  const u=ultimoPeso();
+  document.getElementById('pesoFecha').textContent = u ? 'pesaje del '+fechaCorta(u.f) : 'todavía sin pesajes';
+  const pct = ini===obj ? 0 : Math.max(0, Math.min(100, (baj/(ini-obj))*100));
+  document.getElementById('barraProg').style.width = pct+'%';
+  const rest = difDias(new Date(), fechaObjetivo());
+  document.getElementById('pieIzq').textContent = Math.round(pct)+'% del objetivo';
+  document.getElementById('pieDer').textContent = rest>0 ? rest+' días para el '+fechaCorta(aISO(fechaObjetivo())) : 'plazo cumplido';
+}
+
+function pintarHoy(){
+  const f=hoyISO(), t=totalDia(f), tope=Number(db.cfg.kcalTope);
+  document.getElementById('kcalHoy').textContent = Math.round(t.kcal);
+  document.getElementById('kcalTope').textContent = tope;
+  const resto = tope - t.kcal;
+  const r = document.getElementById('kcalResto');
+  r.textContent = Math.round(Math.abs(resto));
+  r.parentElement.lastChild.textContent = resto>=0 ? 'te quedan' : 'te pasaste';
+  r.style.color = resto>=0 ? 'var(--tiza)' : 'var(--mal)';
+  const bk=document.getElementById('barraKcal');
+  bk.style.width = Math.min(100, (t.kcal/tope)*100)+'%';
+  bk.style.background = resto>=0 ? 'var(--marcador)' : 'var(--mal)';
+
+  const o=objetivos();
+  const barra=(id,val,obj,color)=>{
+    document.getElementById('m'+id).innerHTML = Math.round(val)+' <em>/ '+obj+' g</em>';
+    const b=document.getElementById('b'+id);
+    b.style.width=Math.min(100,(val/obj)*100)+'%';
+    b.style.background = val>obj*1.05 ? 'var(--mal)' : color;
+  };
+  barra('Prot', t.prot, o.prot, 'var(--ok)');
+  barra('Carb', t.carb, o.carb, 'var(--tenue)');
+  barra('Gras', t.gras, o.gras, 'var(--tenue)');
+  document.getElementById('reparto').innerHTML = textoReparto();
+
+  const cont=document.getElementById('listaComidas');
+  const items=db.comidas[f]||[];
+  if(!items.length){ cont.innerHTML='<div class="vacio">Todavía no anotaste nada. Sacale una foto al plato o escribí qué comiste.</div>'; return; }
+  cont.innerHTML = items.map((c,i)=>`
+    <div class="comida">
+      <div class="comida-desc"><b>${esc(c.desc)}</b><span>${c.hora||''} · P ${Math.round(c.prot||0)} · C ${Math.round(c.carb||0)} · G ${Math.round(c.gras||0)}</span></div>
+      <div class="comida-kcal">${Math.round(c.kcal||0)}</div>
+      <button onclick="borrarComida(${i})" aria-label="Borrar">✕</button>
+    </div>`).join('');
+}
+
+/* ---- Momento del día ---- */
+function momentoActual(){
+  const h=new Date().getHours();
+  if(h<10) return {id:'desayuno', txt:'Desayuno'};
+  if(h<12) return {id:'media mañana', txt:'Media mañana'};
+  if(h<15) return {id:'almuerzo', txt:'Almuerzo'};
+  if(h<19) return {id:'merienda', txt:'Merienda'};
+  if(h<23) return {id:'cena', txt:'Cena'};
+  return {id:'nocturno', txt:'Ya es tarde'};
+}
+function pintarMomento(){
+  const m=momentoActual(), t=totalDia(hoyISO());
+  const restoKcal=Math.round(db.cfg.kcalTope - t.kcal);
+  const restoProt=Math.round((Number(db.cfg.protObjetivo)||190) - t.prot);
+  const r=db.rutina[new Date().getDay()]||{nombre:'—'};
+  const ahora=new Date();
+  const hora=dosDig(ahora.getHours())+':'+dosDig(ahora.getMinutes());
+
+  let linea;
+  if(m.id==='nocturno'){
+    linea = restoKcal>=0
+      ? `Cerrá el día. Te sobraron ${restoKcal} kcal, está bien: mañana no las recuperes.`
+      : `Te pasaste por ${Math.abs(restoKcal)} kcal. No pasa nada si mañana volvés al carril.`;
+  } else if(restoKcal<=0){
+    linea = `Ya usaste todo el presupuesto del día. Si tenés hambre, tirá de proteína magra y verdura, que casi no suma.`;
+  } else {
+    linea = `Te quedan <b>${restoKcal} kcal</b> para lo que falta del día` +
+      (restoProt>10 ? ` y te faltan <b>${restoProt} g de proteína</b>.` : `. La proteína ya la tenés cubierta.`);
+  }
+
+  document.getElementById('momento').innerHTML = `
+    <div class="cuando">${hora} · ${m.txt}</div>
+    <p>${linea}<br><span style="color:var(--tenue)">${textoReparto()}</span><br><span style="color:var(--tenue)">Hoy toca: ${esc(r.nombre)}</span></p>
+    <div class="fila-btn">
+      ${m.id!=='nocturno' ? `<button class="mini lleno" onclick="pedirOpciones()">3 opciones de ${esc(m.txt.toLowerCase())}</button>` : ''}
+      <button class="mini" onclick="verVista('entreno', document.querySelectorAll('.solapas button')[1])">Ver el entreno</button>
+    </div>`;
+}
+function pedirOpciones(){
+  const m=momentoActual(), t=totalDia(hoyISO());
+  const restoKcal=Math.round(db.cfg.kcalTope-t.kcal);
+  const restoProt=Math.round((Number(db.cfg.protObjetivo)||190)-t.prot);
+  enviarAlCoach(`Es la hora de ${m.id}. Me quedan ${restoKcal} kcal y me faltan ${restoProt} g de proteína para el día. Dame 3 opciones concretas de ${m.id}, con las calorías y la proteína de cada una, usando comida que consiga en cualquier almacén.`);
+  verVista('coach', document.querySelectorAll('.solapas button')[4]);
+}
+
+/* ---- Entreno ---- */
+function pintarEntreno(){
+  const f=hoyISO(), dia=new Date().getDay();
+  const r=db.rutina[dia]||{nombre:'Descanso', ejercicios:[]};
+  const e=db.entrenos[f]||{modo:'gym', hechos:[]};
+  const hechos=e.hechos||[];
+  const listo=hechos.length && hechos.length===r.ejercicios.length;
+  const gastoHoy=(e.kcalFuerza||0)+(e.kcalCaminata||0);
+  document.getElementById('rutinaHoy').innerHTML = `
+    <div class="entreno-tapa"><h3>${esc(r.nombre)}</h3><span>${hechos.length}/${r.ejercicios.length}</span></div>
+    ${gastoHoy>0?`<div class="sub" style="margin:2px 0 10px">Gasto estimado hoy: <b style="color:var(--tiza)">${gastoHoy} kcal</b>${e.kcalFuerza?` · entreno ${e.kcalFuerza}`:''}${e.kcalCaminata?` · caminata ${e.kcalCaminata} (${(e.pasos||0).toLocaleString('es-AR')} pasos)`:''}</div>`:''}
+    <div class="switch">
+      <button data-on="${e.modo==='gym'?1:0}" onclick="cambiarModo('gym')">En el gimnasio</button>
+      <button data-on="${e.modo==='casa'?1:0}" onclick="cambiarModo('casa')">No llego, en casa</button>
+    </div>
+    ${r.ejercicios.map((x,i)=>`
+      <div class="ej">
+        <button class="tick" data-ok="${hechos.includes(i)?1:0}" onclick="tildarEj(${i})" aria-label="Hecho">${hechos.includes(i)?'✓':''}</button>
+        <div class="ej-txt">
+          <b>${esc(e.modo==='casa'?x.casa:x.gym)}</b>
+          <span>${esc(x.series||'')}${e.modo==='casa'?' · versión casera':''}</span>
+          <button class="link" style="padding:3px 0 0;font-size:12px" onclick="registrarCarga(${i})">${e.cargas&&e.cargas[i]?'Hoy: '+esc(e.cargas[i]):(ultimaCarga(i)?'Antes: '+esc(ultimaCarga(i))+' · anotar':'+ anotar cuánto usaste')}</button>
+        </div>
+      </div>`).join('')}
+    <button class="cerrar" style="margin-top:14px" onclick="cerrarEntreno()">${listo?'Entrenamiento hecho ✓':'Marcar entrenamiento como hecho'}</button>`;
+}
+function cambiarModo(m){
+  const f=hoyISO();
+  db.entrenos[f]=Object.assign({modo:'gym',hechos:[]}, db.entrenos[f], {modo:m});
+  guardar(); pintarEntreno();
+}
+function tildarEj(i){
+  const f=hoyISO();
+  const e=db.entrenos[f]||{modo:'gym',hechos:[]};
+  e.hechos=e.hechos||[];
+  const p=e.hechos.indexOf(i);
+  if(p>=0) e.hechos.splice(p,1); else e.hechos.push(i);
+  db.entrenos[f]=e; guardar(); pintarEntreno();
+}
+function ultimaCarga(i){
+  const hoy=hoyISO();
+  const claves=Object.keys(db.entrenos).filter(f=>f<hoy && db.entrenos[f].cargas && db.entrenos[f].cargas[i]).sort().reverse();
+  return claves.length ? db.entrenos[claves[0]].cargas[i] : null;
+}
+function registrarCarga(i){
+  const f=hoyISO();
+  const anterior=ultimaCarga(i);
+  const v=prompt('¿Cuánto usaste en este ejercicio?\nEj: "40kg x8" o "cuerpo" si fue con tu peso.'+(anterior?`\n\nLa vez pasada: ${anterior}`:''), (db.entrenos[f]&&db.entrenos[f].cargas&&db.entrenos[f].cargas[i])||'');
+  if(v===null || v.trim()==='') return;
+  const e=db.entrenos[f]||{modo:'gym',hechos:[]};
+  e.cargas=e.cargas||{};
+  e.cargas[i]=v.trim();
+  db.entrenos[f]=e; guardar(); pintarEntreno();
+}
+function registrarCaminata(){
+  const f=hoyISO();
+  const anterior=(db.entrenos[f]&&db.entrenos[f].pasos)||10000;
+  const v=prompt('¿Cuántos pasos hiciste? (los podés ver en el celular o el reloj)', anterior);
+  if(!v) return;
+  const pasos=Number(String(v).replace(/\./g,'').replace(',','.'));
+  if(isNaN(pasos)||pasos<=0){ alert('Poné un número de pasos válido.'); return; }
+  const factor=Number(db.cfg.factorPaso)||0.00055;
+  const kcal=Math.round(pasos*pesoHoy()*factor);
+  const e=db.entrenos[f]||{modo:'gym',hechos:[]};
+  e.pasos=pasos; e.kcalCaminata=kcal;
+  db.entrenos[f]=e; guardar(); pintarEntreno();
+  festejarComida(`Caminata anotada: ${pasos.toLocaleString('es-AR')} pasos, ~${kcal} kcal gastadas.`);
+}
+function cerrarEntreno(){
+  const f=hoyISO(), dia=new Date().getDay();
+  const r=db.rutina[dia]||{ejercicios:[]};
+  const estim=Math.max(20, r.ejercicios.length*7);
+  abrirHoja(`
+    <h3>Cerrar el entrenamiento</h3>
+    <div class="sub">Con esto estimo cuánto gastaste. No es un dato exacto — depende mucho más de cuánto te movés que de los kilos que levantaste, así que priorizo duración y esfuerzo real.</div>
+    <div class="dos">
+      <div class="campo"><label>¿Cuánto duró? (minutos)</label><input type="number" id="entMin" value="${estim}"></div>
+      <div class="campo"><label>Esfuerzo</label>
+        <select id="entEsfuerzo">
+          <option value="3.5">Liviano</option>
+          <option value="5" selected>Moderado</option>
+          <option value="6.5">A fondo, sin parar</option>
+        </select></div>
+    </div>
+    <button class="cerrar" onclick="guardarCierreEntreno('${f}')">Registrar</button>`);
+}
+function guardarCierreEntreno(f){
+  const min=Number(document.getElementById('entMin').value)||30;
+  const met=Number(document.getElementById('entEsfuerzo').value)||5;
+  const kcal=Math.round(met*3.5*pesoHoy()/200*min);
+  const e=db.entrenos[f]||{modo:'gym',hechos:[]};
+  e.minutos=min; e.esfuerzo=met; e.kcalFuerza=kcal;
+  db.entrenos[f]=e;
+  const r=db.rutina[new Date().getDay()];
+  db.dias[f]=Object.assign({}, db.dias[f], {entreno: e.modo==='casa'?'casero':'fuerza'});
+  guardar(); cerrarHoja(); pintarCalendario(); pintarEntreno();
+  festejarComida(`${r?r.nombre:'Entrenamiento'}: ~${kcal} kcal gastadas en ${min} min.`);
+}
+function editarRutina(){
+  const dia=new Date().getDay(), r=db.rutina[dia];
+  const texto=r.ejercicios.map(x=>`${x.gym} | ${x.casa} | ${x.series||''}`).join('\n');
+  abrirHoja(`
+    <h3>Rutina de hoy</h3>
+    <div class="sub">Un ejercicio por línea, con barras: <b>gimnasio | en casa | series</b></div>
+    <div class="campo"><label>Nombre del día</label><input type="text" id="rNombre" value="${esc(r.nombre)}"></div>
+    <div class="campo"><label>Ejercicios</label><textarea id="rEj" style="min-height:170px">${esc(texto)}</textarea></div>
+    <button class="cerrar" onclick="guardarRutina(${dia})">Guardar la rutina</button>
+    <button class="link" onclick="restaurarRutina(${dia})">Volver a la rutina original</button>
+    <div class="campo" style="margin-top:10px"><label>Tu equipo en casa (para las versiones caseras)</label><textarea id="rEquipo" style="min-height:60px">${esc(db.cfg.equipoCasa||'')}</textarea></div>
+    <button class="link" onclick="document.getElementById('rEquipo').value && (db.cfg.equipoCasa=document.getElementById('rEquipo').value.trim(), guardar(), alert('Guardado.'))">Guardar equipo</button>`);
+}
+function guardarRutina(dia){
+  const nombre=document.getElementById('rNombre').value.trim()||'Entrenamiento';
+  const lineas=document.getElementById('rEj').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  db.rutina[dia]={nombre, ejercicios:lineas.map(l=>{
+    const p=l.split('|').map(s=>s.trim());
+    return {gym:p[0]||'', casa:p[1]||p[0]||'', series:p[2]||''};
+  })};
+  db.entrenos[hoyISO()]=Object.assign({modo:'gym'}, db.entrenos[hoyISO()], {hechos:[]});
+  guardar(); cerrarHoja(); pintarEntreno(); pintarMomento();
+}
+function restaurarRutina(dia){
+  db.rutina[dia]=JSON.parse(JSON.stringify(RUTINA_BASE[dia]));
+  guardar(); cerrarHoja(); pintarEntreno(); pintarMomento();
+}
+
+/* ---- Fichas de máquinas ---- */
+function pintarFichas(){
+  const c=document.getElementById('listaFichas');
+  const claves=Object.keys(db.fichas);
+  if(!claves.length){ c.innerHTML='<div class="bloque"><span class="vacio">Sacale una foto a cualquier máquina del gimnasio y te queda guardada acá, con la regulación y los pasos.</span></div>'; return; }
+  c.innerHTML=claves.sort().map(k=>{
+    const f=db.fichas[k];
+    return `<div class="ficha">
+      <h4>${esc(k)}</h4>
+      <p>${esc(f.texto)}</p>
+      <div class="pie">
+        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(k+' técnica ejercicio')}" target="_blank" rel="noopener">Ver video de técnica ↗</a>
+        <button class="link" onclick="borrarFicha('${esc(k).replace(/'/g,"\\'")}')">Borrar</button>
+      </div></div>`;
+  }).join('');
+}
+function borrarFicha(k){ delete db.fichas[k]; guardar(); pintarFichas(); }
+
+/* ---- Cuánto te queda para cada comida que falta ---- */
+const FRANJAS=[
+  {id:'desayuno', txt:'Desayuno', hasta:10},
+  {id:'almuerzo', txt:'Almuerzo', hasta:15},
+  {id:'merienda', txt:'Merienda', hasta:19},
+  {id:'cena',     txt:'Cena',     hasta:23}
+];
+function comidasQueFaltan(){
+  const h=new Date().getHours();
+  return FRANJAS.filter(f=>h<f.hasta);
+}
+function textoReparto(){
+  const t=totalDia(hoyISO()), o=objetivos();
+  const faltan=comidasQueFaltan();
+  const kcal=Math.round(o.kcal-t.kcal), prot=Math.round(o.prot-t.prot);
+  if(!faltan.length){
+    return kcal>=0
+      ? `Ya no quedan comidas en el día. Te sobraron <b>${kcal} kcal</b>.`
+      : `Cerrado el día: te pasaste por <b>${Math.abs(kcal)} kcal</b>.`;
+  }
+  if(kcal<=0){
+    return `Te quedan <b>${faltan.map(f=>f.txt.toLowerCase()).join(' y ')}</b> y ya no te queda presupuesto. Tirá de proteína magra y verdura.`;
+  }
+  const n=faltan.length;
+  return `Te faltan <b>${faltan.map(f=>f.txt.toLowerCase()).join(' y ')}</b>: unas <b>${Math.round(kcal/n)} kcal</b>` +
+         (prot>0 ? ` y <b>${Math.round(prot/n)} g de proteína</b>` : '') + ` en cada una.`;
+}
+
+function festejarComida(texto){
+  const el=document.getElementById('brindis');
+  el.className='brindis bien';
+  el.innerHTML=`<b>Anotado ✓</b><span>${esc(texto)}</span>`;
+  requestAnimationFrame(()=>el.classList.add('arriba'));
+  clearTimeout(relojBrindis);
+  relojBrindis=setTimeout(()=>el.classList.remove('arriba'), 2600);
+}
+
+/* ============ GOOGLE DRIVE ============ */
+let driveToken=null, driveExp=0, driveCliente=null, driveTimer=null;
+
+function driveDisponible(){ return !!DRIVE_CLIENT_ID; }
+
+(function restaurarTokenDrive(){
+  try{
+    const g=JSON.parse(localStorage.getItem('davoCoach.driveToken')||'null');
+    if(g && g.exp>Date.now()){ driveToken=g.t; driveExp=g.exp; }
+  }catch(e){}
+})();
+
+window.addEventListener('load', ()=>{
+  if(!driveDisponible()) return;
+  const esperar=setInterval(()=>{
+    if(!(window.google && google.accounts && google.accounts.oauth2)) return;
+    clearInterval(esperar);
+    driveCliente = google.accounts.oauth2.initTokenClient({
+      client_id: DRIVE_CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/drive.file',
+      callback: (resp)=>{
+        if(resp.error){ estadoDrive('No se pudo conectar: '+resp.error); return; }
+        driveToken=resp.access_token;
+        driveExp=Date.now()+((resp.expires_in||3500)*1000);
+        localStorage.setItem('davoCoach.driveToken', JSON.stringify({t:driveToken, exp:driveExp}));
+        sincronizarDrive(true);
+      }
+    });
+    pintarEstadoDriveInicial();
+    if(driveToken && driveExp>Date.now()) sincronizarDrive(false);
+  },300);
+});
+
+function conectarDrive(){
+  if(!driveDisponible()){ alert('Todavía no configuraste el Client ID de Google. Mirá las instrucciones en Ajustes.'); return; }
+  if(!driveCliente){ alert('Google está cargando, esperá un segundo y probá de nuevo.'); return; }
+  driveCliente.requestAccessToken({prompt: driveToken?'':'consent'});
+}
+function desconectarDrive(){
+  driveToken=null; driveExp=0;
+  localStorage.removeItem('davoCoach.driveToken');
+  localStorage.removeItem('davoCoach.driveFileId');
+  estadoDrive('Desconectado.');
+  if(document.getElementById('hoja').classList.contains('abierta')) abrirAjustes();
+}
+function estadoDrive(texto){
+  const el=document.getElementById('driveEstado');
+  if(el) el.textContent=texto;
+}
+function pintarEstadoDriveInicial(){
+  if(driveToken && driveExp>Date.now()) estadoDrive('Conectado. Última sincronización: '+(db._sync?.driveEn?fechaHora(db._sync.driveEn):'todavía no'));
+  else estadoDrive('No conectado.');
+}
+function fechaHora(iso){
+  const d=new Date(iso);
+  return dosDig(d.getDate())+'/'+dosDig(d.getMonth()+1)+' '+dosDig(d.getHours())+':'+dosDig(d.getMinutes());
+}
+
+async function llamarDrive(url, opciones={}){
+  const res=await fetch(url, Object.assign({}, opciones, {headers:Object.assign({Authorization:'Bearer '+driveToken}, opciones.headers||{})}));
+  if(res.status===401){ desconectarDrive(); throw new Error('Se venció la conexión con Google, conectate de nuevo.'); }
+  return res;
+}
+
+async function sincronizarDrive(manual){
+  if(!driveDisponible()) return;
+  if(!driveToken || driveExp<=Date.now()){ if(manual) conectarDrive(); return; }
+  estadoDrive('Sincronizando…');
+  try{
+    let fileId=localStorage.getItem('davoCoach.driveFileId');
+    if(!fileId){
+      const q=encodeURIComponent(`name='${DRIVE_ARCHIVO}' and trashed=false`);
+      const res=await llamarDrive(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id)`);
+      const data=await res.json();
+      if(data.files && data.files.length){ fileId=data.files[0].id; localStorage.setItem('davoCoach.driveFileId', fileId); }
+    }
+    if(!fileId){ await subirADrive(null); return; }
+
+    const res=await llamarDrive(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
+    if(!res.ok){ await subirADrive(fileId); return; }
+    const remoto=await res.json();
+    const localTS=db._sync?.ultima, remotoTS=remoto._sync?.ultima;
+
+    if(remotoTS && localTS && remotoTS>localTS){
+      mostrarEleccionDrive(remoto, fileId, localTS, remotoTS);
+    } else {
+      await subirADrive(fileId);
+    }
+  }catch(e){
+    estadoDrive('No se pudo sincronizar: '+e.message);
+  }
+}
+
+function mostrarEleccionDrive(remoto, fileId, localTS, remotoTS){
+  abrirHoja(`
+    <h3>Hay datos distintos en Drive</h3>
+    <div class="sub">Usaste la app en otro dispositivo. Elegí cuáles datos te quedás; los otros se pierden.</div>
+    <div class="dos">
+      <button class="acc" style="text-align:center" onclick="aplicarRemoto(${JSON.stringify(remoto).replace(/"/g,'&quot;')}, '${fileId}')"><b>Usar los de Drive</b><span>${fechaHora(remotoTS)}</span></button>
+      <button class="acc" style="text-align:center" onclick="subirADrive('${fileId}');cerrarHoja()"><b>Usar los de acá</b><span>${fechaHora(localTS)}</span></button>
+    </div>`);
+}
+function aplicarRemoto(remoto, fileId){
+  db = Object.assign(POR_DEFECTO(), remoto, {cfg:Object.assign(POR_DEFECTO().cfg, remoto.cfg||{})});
+  localStorage.setItem(CLAVE_LS, JSON.stringify(db));
+  localStorage.setItem('davoCoach.driveFileId', fileId);
+  cerrarHoja(); pintarTodo(); pintarChat();
+  estadoDrive('Traído de Drive. Sincronizado: '+fechaHora(new Date().toISOString()));
+}
+
+async function subirADrive(fileId){
+  db._sync = Object.assign({}, db._sync, {driveEn: new Date().toISOString()});
+  const payload=JSON.stringify(db);
+  if(fileId){
+    await llamarDrive(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+      method:'PATCH', headers:{'Content-Type':'application/json'}, body:payload
+    });
+  } else {
+    const boundary='-----davoCoachLimite';
+    const cuerpo=`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`+
+      JSON.stringify({name:DRIVE_ARCHIVO, mimeType:'application/json'})+
+      `\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${payload}\r\n--${boundary}--`;
+    const res=await llamarDrive('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method:'POST', headers:{'Content-Type':'multipart/related; boundary='+boundary}, body:cuerpo
+    });
+    const data=await res.json();
+    if(data.id) localStorage.setItem('davoCoach.driveFileId', data.id);
+  }
+  localStorage.setItem(CLAVE_LS, JSON.stringify(db));
+  estadoDrive('Sincronizado: '+fechaHora(new Date().toISOString()));
+}
+
+function programarSubidaDrive(){
+  if(!driveDisponible() || !driveToken || driveExp<=Date.now()) return;
+  clearTimeout(driveTimer);
+  driveTimer=setTimeout(()=>subirADrive(localStorage.getItem('davoCoach.driveFileId')), 2500);
+}
+
+/* ============ CALCULADORA DE META ============ */
+function abrirCalculadora(){
+  abrirHoja(`
+    <h3>Calculá tu meta</h3>
+    <div class="sub">Usa tu peso actual (${pesoHoy()} kg) y tu altura (${db.cfg.altura} m). Es una fórmula estándar (Mifflin-St Jeor), no reemplaza a una nutricionista, pero es mucho más real que un número inventado.</div>
+    <div class="dos">
+      <div class="campo"><label>Edad</label><input type="number" id="calEdad" placeholder="años"></div>
+      <div class="campo"><label>Sexo</label><select id="calSexo"><option value="m">Varón</option><option value="f">Mujer</option></select></div>
+    </div>
+    <div class="campo"><label>Nivel de actividad</label>
+      <select id="calActividad">
+        <option value="1.2">Sedentario (trabajo de escritorio, sin entrenar)</option>
+        <option value="1.375">Liviano (te movés algo, entrenás 1-3 veces)</option>
+        <option value="1.55" selected>Moderado (fuerza varias veces + caminata diaria)</option>
+        <option value="1.725">Alto (entrenás fuerte casi todos los días)</option>
+      </select></div>
+    <div class="campo"><label>Ritmo de descenso</label>
+      <select id="calRitmo">
+        <option value="0.25">Suave: 0,25 kg por semana</option>
+        <option value="0.5" selected>Moderado: 0,5 kg por semana</option>
+        <option value="0.75">Firme: 0,75 kg por semana</option>
+      </select></div>
+    <button class="cerrar" onclick="calcularMeta()">Calcular</button>
+    <div id="resultadoCalc"></div>`);
+}
+function calcularMeta(){
+  const edad=Number(document.getElementById('calEdad').value);
+  if(!edad||edad<14||edad>90){ alert('Poné tu edad en años.'); return; }
+  const sexo=document.getElementById('calSexo').value;
+  const actividad=Number(document.getElementById('calActividad').value);
+  const ritmo=Number(document.getElementById('calRitmo').value);
+  const peso=pesoHoy(), alturaCm=(Number(db.cfg.altura)||1.75)*100;
+
+  const bmr = 10*peso + 6.25*alturaCm - 5*edad + (sexo==='m'?5:-161);
+  const tdee = bmr*actividad;
+  const deficit = ritmo*7700/7;
+  const kcalSugerida = Math.round((tdee-deficit)/10)*10;
+  const pesoRef = (peso + Number(db.cfg.pesoObjetivo))/2;
+  const protSugerida = Math.round(pesoRef*1.8/5)*5;
+
+  document.getElementById('resultadoCalc').innerHTML = `
+    <div class="bloque" style="margin-top:14px">
+      <div class="reparto">Metabolismo basal: <b>${Math.round(bmr)} kcal</b> (lo que gastás sin moverte)</div>
+      <div class="reparto">Gasto total estimado: <b>${Math.round(tdee)} kcal</b> (con tu actividad)</div>
+      <div class="reparto" style="border-top:none;padding-top:0">Para bajar ${ritmo} kg/semana: <b style="color:var(--marcador);font-size:18px">${kcalSugerida} kcal</b> por día</div>
+      <div class="reparto">Proteína sugerida: <b>${protSugerida} g</b> (usando un peso de referencia entre tu actual y tu objetivo, para no sobreestimar)</div>
+    </div>
+    <button class="cerrar" onclick="aplicarCalculadora(${kcalSugerida}, ${protSugerida})">Usar estos números</button>
+    <div class="sub">Si te da muy bajo o muy raro, contrastalo con una nutricionista antes de sostenerlo seis meses — la fórmula es un promedio poblacional, no te conoce a vos.</div>`;
+}
+function aplicarCalculadora(kcal, prot){
+  db.cfg.kcalTope=kcal; db.cfg.protObjetivo=prot;
+  db.cfg.carbObjetivo=0; db.cfg.grasObjetivo=0;
+  guardar(); cerrarHoja(); pintarTodo();
+  festejarComida(`Meta actualizada: ${kcal} kcal y ${prot} g de proteína por día.`);
+}
+
+/* ============ ALIMENTOS (pesar y anotar) ============ */
+let filtroAlim='';
+function abrirAlimentos(){
+  filtroAlim='';
+  abrirHoja(`
+    <h3>Pesar y anotar</h3>
+    <div class="sub">Elegí el alimento y poné los gramos de la balanza. Los números salen exactos y siempre iguales.</div>
+    <input class="buscador" id="busca" placeholder="Buscar: pan, arroz, milanesa..." oninput="filtrarAlim(this.value)" autocomplete="off">
+    <div class="sub" style="margin-top:-4px">Tocá el alimento → te pide los gramos de la balanza → lo suma solo. El lápiz es para corregir el valor si tenés el paquete.</div>
+    <div class="lista-scroll" id="listaAlim"></div>
+    <button class="cerrar" onclick="nuevoAlimento()">＋ Alimento nuevo</button>
+  `);
+  pintarAlimentos();
+}
+function filtrarAlim(v){ filtroAlim=v.toLowerCase(); pintarAlimentos(); }
+function pintarAlimentos(){
+  const cont=document.getElementById('listaAlim'); if(!cont) return;
+  const claves=Object.keys(db.alimentos).filter(k=>k.toLowerCase().includes(filtroAlim)).sort();
+  if(!claves.length){ cont.innerHTML='<div class="vacio">No lo tenés cargado. Tocá "Alimento nuevo" y lo agregás una vez para siempre.</div>'; return; }
+  cont.innerHTML=claves.map(k=>{
+    const a=db.alimentos[k];
+    return `<div class="item" onclick="cargarAlimento('${escJS(k)}')">
+      <div class="item-txt"><b>${esc(k)}</b><span>${a.kcal} kcal · P ${a.prot} · C ${a.carb} · G ${a.gras} por 100 g${a.u?` · 1 ${esc(a.u)} = ${a.ug} g`:''}</span></div>
+      <span class="toca">Tocá<br>y pesá</span>
+      <button class="lapiz" onclick="event.stopPropagation();editarAlimento('${escJS(k)}')" aria-label="Corregir valores">✎</button>
+    </div>`;
+  }).join('');
+}
+function escJS(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+function cargarAlimento(k){
+  const a=db.alimentos[k];
+  const ayuda = a.u ? `\n\nPesalo en la balanza y escribí los gramos.\nO escribí "2u" para 2 ${a.u}s (1 ${a.u} = ${a.ug} g).` : '\n\nPesalo en la balanza y escribí los gramos.';
+  const r=prompt(`⚖️ ${k}${ayuda}`, '');
+  if(!r) return;
+  let g;
+  const s=String(r).trim().replace(',','.').toLowerCase();
+  if(s.endsWith('u') && a.ug) g=parseFloat(s)*a.ug;
+  else g=parseFloat(s);
+  if(isNaN(g)||g<=0){ alert('Poné un número de gramos válido.'); return; }
+  const f=g/100;
+  agregarComida({desc:`${k} (${Math.round(g)} g)`, kcal:a.kcal*f, prot:a.prot*f, carb:a.carb*f, gras:a.gras*f});
+  cerrarHoja();
+  festejarComida(`${k}: ${Math.round(a.kcal*f)} kcal anotadas.`);
+}
+
+function editarAlimento(k){ formAlimento(k); }
+function nuevoAlimento(){ formAlimento(null); }
+function formAlimento(k){
+  const a = k ? db.alimentos[k] : {kcal:'',prot:'',carb:'',gras:'',u:'',ug:''};
+  abrirHoja(`
+    <h3>${k?'Editar alimento':'Alimento nuevo'}</h3>
+    <div class="sub">Los valores van <b>por cada 100 g</b>. Copialos de la etiqueta del paquete: es el dato más confiable que vas a conseguir.</div>
+    <div class="campo"><label>Nombre</label><input type="text" id="fNom" value="${k?esc(k):''}" placeholder="Ej: Pan casero de la panadería"></div>
+    <div class="dos">
+      <div class="campo"><label>Kcal / 100 g</label><input type="number" inputmode="decimal" id="fKcal" value="${a.kcal}"></div>
+      <div class="campo"><label>Proteína / 100 g</label><input type="number" step="0.1" inputmode="decimal" id="fProt" value="${a.prot}"></div>
+    </div>
+    <div class="dos">
+      <div class="campo"><label>Carbos / 100 g</label><input type="number" step="0.1" inputmode="decimal" id="fCarb" value="${a.carb}"></div>
+      <div class="campo"><label>Grasas / 100 g</label><input type="number" step="0.1" inputmode="decimal" id="fGras" value="${a.gras}"></div>
+    </div>
+    <div class="dos">
+      <div class="campo"><label>Unidad (opcional)</label><input type="text" id="fU" value="${esc(a.u||'')}" placeholder="rodaja, huevo, taza"></div>
+      <div class="campo"><label>Cuánto pesa (g)</label><input type="number" inputmode="decimal" id="fUg" value="${a.ug||''}" placeholder="Pesala una vez"></div>
+    </div>
+    <button class="cerrar" onclick="guardarAlimento(${k?`'${escJS(k)}'`:'null'})">Guardar</button>
+    <div style="display:flex;gap:16px;justify-content:center">
+      <button class="link" onclick="preguntarValores()">No sé los valores, que los busque la IA</button>
+      ${k?`<button class="link" onclick="borrarAlimento('${escJS(k)}')">Borrar</button>`:''}
+    </div>`);
+}
+function guardarAlimento(viejo){
+  const v=id=>document.getElementById(id).value;
+  const nom=v('fNom').trim();
+  if(!nom){ alert('Ponele un nombre.'); return; }
+  const a={kcal:Number(v('fKcal'))||0, prot:Number(v('fProt'))||0, carb:Number(v('fCarb'))||0, gras:Number(v('fGras'))||0};
+  if(v('fU').trim() && Number(v('fUg'))>0){ a.u=v('fU').trim(); a.ug=Number(v('fUg')); }
+  if(viejo && viejo!==nom) delete db.alimentos[viejo];
+  db.alimentos[nom]=a; guardar(); abrirAlimentos();
+}
+function borrarAlimento(k){ delete db.alimentos[k]; guardar(); abrirAlimentos(); }
+
+async function preguntarValores(){
+  const nom=document.getElementById('fNom').value.trim();
+  if(!nom){ alert('Escribí primero el nombre del alimento.'); return; }
+  const texto=await geminiUnaVez(
+    `Devolvés SOLO un JSON, sin texto alrededor, con los valores nutricionales por cada 100 gramos del alimento que te nombren, tal como se consume en Argentina. Formato: {"kcal":0,"prot":0,"carb":0,"gras":0,"u":"unidad habitual o vacío","ug":0}. Si no existe una unidad habitual, poné "u":"" y "ug":0.`,
+    [{text:nom}]);
+  if(!texto) return;
+  try{
+    const o=JSON.parse(texto.replace(/```json|```/g,'').trim());
+    document.getElementById('fKcal').value=o.kcal||'';
+    document.getElementById('fProt').value=o.prot||'';
+    document.getElementById('fCarb').value=o.carb||'';
+    document.getElementById('fGras').value=o.gras||'';
+    if(o.u){ document.getElementById('fU').value=o.u; document.getElementById('fUg').value=o.ug||''; }
+    alert('Cargados. Son valores de referencia: si tenés el paquete a mano, corregilos con la etiqueta.');
+  }catch(e){ alert('No pude interpretar la respuesta. Cargalos a mano.'); }
+}
+
+/* ============ RECETAS ============ */
+function abrirRecetas(){
+  const claves=Object.keys(db.recetas).sort();
+  abrirHoja(`
+    <h3>Mis recetas</h3>
+    <div class="sub">Cargás la receta una vez con los gramos de cada ingrediente y después anotás tu plato en dos toques.</div>
+    <div class="lista-scroll">
+      ${claves.length ? claves.map(k=>{
+        const r=db.recetas[k], p=r.total.kcal/r.porciones;
+        return `<div class="item" onclick="comerReceta('${escJS(k)}')">
+          <div class="item-txt"><b>${esc(k)}</b><span>${r.porciones} porciones · ${Math.round(p)} kcal y ${Math.round(r.total.prot/r.porciones)} g de proteína por porción${r.pesoTotal?` · olla de ${r.pesoTotal} g`:''}</span></div>
+          <button class="lapiz" onclick="event.stopPropagation();borrarReceta('${escJS(k)}')" aria-label="Borrar">✕</button>
+        </div>`;
+      }).join('') : '<div class="vacio">Todavía no cargaste ninguna receta.</div>'}
+    </div>
+    <button class="cerrar" onclick="formReceta()">＋ Receta nueva</button>`);
+}
+function formReceta(){
+  abrirHoja(`
+    <h3>Receta nueva</h3>
+    <div class="sub">Un ingrediente por línea: <b>nombre | gramos</b>. Si el nombre está en tus alimentos, usa esos valores; si no, lo estima la IA.</div>
+    <div class="campo"><label>Nombre</label><input type="text" id="rcNom" placeholder="Humita en olla de la vieja"></div>
+    <div class="campo"><label>Ingredientes</label><textarea id="rcIng" style="min-height:150px" placeholder="Choclo | 800&#10;Leche entera | 250&#10;Queso port salut | 150&#10;Aceite | 20"></textarea></div>
+    <div class="dos">
+      <div class="campo"><label>Porciones</label><input type="number" id="rcPor" value="6"></div>
+      <div class="campo"><label>Peso total cocido (g)</label><input type="number" id="rcPeso" placeholder="Opcional"></div>
+    </div>
+    <button class="cerrar" onclick="calcularReceta()">Calcular y guardar</button>
+    <div class="sub" style="margin-top:10px">Si pesás la olla llena y ponés ese peso, después anotás los gramos exactos de tu plato en vez de adivinar cuánto es "medio plato".</div>`);
+}
+async function calcularReceta(){
+  const nom=document.getElementById('rcNom').value.trim();
+  const lineas=document.getElementById('rcIng').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  const porciones=Number(document.getElementById('rcPor').value)||1;
+  const pesoTotal=Number(document.getElementById('rcPeso').value)||0;
+  if(!nom||!lineas.length){ alert('Falta el nombre o los ingredientes.'); return; }
+
+  const total={kcal:0,prot:0,carb:0,gras:0};
+  const desconocidos=[];
+  lineas.forEach(l=>{
+    const p=l.split('|').map(s=>s.trim());
+    const g=parseFloat(String(p[1]||'').replace(',','.'));
+    if(!p[0]||isNaN(g)) return;
+    const clave=Object.keys(db.alimentos).find(k=>k.toLowerCase()===p[0].toLowerCase())
+             || Object.keys(db.alimentos).find(k=>k.toLowerCase().includes(p[0].toLowerCase()));
+    if(clave){
+      const a=db.alimentos[clave], f=g/100;
+      total.kcal+=a.kcal*f; total.prot+=a.prot*f; total.carb+=a.carb*f; total.gras+=a.gras*f;
+    } else desconocidos.push({nombre:p[0], g});
+  });
+
+  if(desconocidos.length){
+    const texto=await geminiUnaVez(
+      `Devolvés SOLO un JSON, sin texto alrededor, con el total nutricional de la lista de ingredientes y cantidades en gramos que te pasen, tal como se consumen en Argentina. Formato exacto: {"kcal":0,"prot":0,"carb":0,"gras":0}`,
+      [{text:desconocidos.map(d=>`${d.nombre}: ${d.g} g`).join('\n')}]);
+    if(texto){
+      try{
+        const o=JSON.parse(texto.replace(/```json|```/g,'').trim());
+        total.kcal+=+o.kcal||0; total.prot+=+o.prot||0; total.carb+=+o.carb||0; total.gras+=+o.gras||0;
+      }catch(e){ alert('No pude estimar: '+desconocidos.map(d=>d.nombre).join(', ')+'. Cargalos en tus alimentos y rehacé la receta.'); }
+    }
+  }
+  db.recetas[nom]={porciones, pesoTotal, total, ingredientes:lineas};
+  guardar(); abrirRecetas();
+}
+function comerReceta(k){
+  const r=db.recetas[k];
+  let f;
+  if(r.pesoTotal){
+    const g=prompt(`${k}\n\nLa olla entera pesó ${r.pesoTotal} g.\n¿Cuántos gramos te serviste en el plato?`, Math.round(r.pesoTotal/r.porciones));
+    if(!g) return;
+    const n=parseFloat(String(g).replace(',','.'));
+    if(isNaN(n)||n<=0) return;
+    f=n/r.pesoTotal;
+    agregarComida({desc:`${k} (${Math.round(n)} g)`, kcal:r.total.kcal*f, prot:r.total.prot*f, carb:r.total.carb*f, gras:r.total.gras*f});
+  } else {
+    const p=prompt(`${k}\n\n¿Cuántas porciones comiste? (podés poner 0,5)`, '1');
+    if(!p) return;
+    const n=parseFloat(String(p).replace(',','.'));
+    if(isNaN(n)||n<=0) return;
+    f=n/r.porciones;
+    agregarComida({desc:`${k} (${n} porción${n===1?'':'es'})`, kcal:r.total.kcal*f, prot:r.total.prot*f, carb:r.total.carb*f, gras:r.total.gras*f});
+  }
+  cerrarHoja();
+}
+function borrarReceta(k){ delete db.recetas[k]; guardar(); abrirRecetas(); }
+
+function pintarCalendario(){
+  document.getElementById('tituloMes').textContent = MESES[mesVisible.getMonth()]+' '+mesVisible.getFullYear();
+  const dow=['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+  document.getElementById('grillaDow').innerHTML = dow.map(d=>`<div class="dow">${d}</div>`).join('');
+  const primero=new Date(mesVisible.getFullYear(), mesVisible.getMonth(), 1);
+  let arranque=(primero.getDay()+6)%7;
+  let cur=sumarDias(primero,-arranque);
+  let html='';
+  for(let i=0;i<42;i++){
+    const f=aISO(cur), dentro=cur.getMonth()===mesVisible.getMonth();
+    const d=db.dias[f]||{}, tienePeso=db.pesos[f]!==undefined;
+    const cls=['dia', dentro?'dentro':'fuera', d.estado||'', f===hoyISO()?'hoy':''].join(' ');
+    html+=`<button class="${cls}" onclick="abrirDia('${f}')">${cur.getDate()}${tienePeso?'<u></u>':''}</button>`;
+    cur=sumarDias(cur,1);
+    if(i>=34 && cur.getMonth()!==mesVisible.getMonth() && (i+1)%7===0) break;
+  }
+  document.getElementById('grillaDias').innerHTML=html;
+}
+
+function pintarTira(){
+  const ini=deISO(db.cfg.fechaInicio), fin=fechaObjetivo(), hoy=hoyISO();
+  let cur=sumarDias(ini, -((ini.getDay()+6)%7));
+  let celdas='', etiquetas='', ultimoMes=-1, cols=0;
+  while(cur<=fin){
+    const inicioSemana=new Date(cur);
+    for(let i=0;i<7;i++){
+      const f=aISO(cur), d=db.dias[f]||{};
+      const fuera = cur<ini||cur>fin, futuro = f>hoy;
+      celdas+=`<b class="${fuera?'':(d.estado||(futuro?'futuro':''))} ${f===hoy?'hoy':''}" title="${f}"></b>`;
+      cur=sumarDias(cur,1);
+    }
+    if(inicioSemana.getMonth()!==ultimoMes){
+      ultimoMes=inicioSemana.getMonth();
+      etiquetas+=`<span style="position:absolute;left:${cols*13}px">${MESES3[ultimoMes]}</span>`;
+    }
+    cols++;
+  }
+  document.getElementById('tira').innerHTML=celdas;
+  document.getElementById('tiraMeses').innerHTML=`<div style="position:relative;height:12px;width:${cols*13}px">${etiquetas}</div>`;
+  const total=difDias(ini,fin), pasados=Math.max(0,Math.min(total,difDias(ini,new Date())));
+  const marcados=Object.keys(db.dias).filter(f=>['bien','zafe','mal'].includes((db.dias[f]||{}).estado)).length;
+  document.getElementById('tiraIzq').textContent = pasados+' de '+total+' días transcurridos';
+  document.getElementById('tiraDer').textContent = marcados+' días marcados';
+}
+
+function pintarProgreso(){
+  const ini=Number(db.cfg.pesoInicial), obj=Number(db.cfg.pesoObjetivo), act=pesoHoy();
+  const baj=ini-act, falta=act-obj;
+  document.getElementById('cBajado').textContent = baj.toFixed(1).replace('.',',')+' kg';
+  document.getElementById('cBajadoSub').textContent = 'desde los '+ini+' kg';
+  document.getElementById('cFalta').textContent = Math.max(0,falta).toFixed(1).replace('.',',')+' kg';
+  document.getElementById('cFaltaSub').textContent = 'hasta los '+obj+' kg';
+  const semTrans=Math.max(0.5, difDias(deISO(db.cfg.fechaInicio), new Date())/7);
+  const semRest=Math.max(0.5, difDias(new Date(), fechaObjetivo())/7);
+  document.getElementById('cRitmo').textContent = (baj/semTrans).toFixed(2).replace('.',',');
+  document.getElementById('cNecesario').textContent = (Math.max(0,falta)/semRest).toFixed(2).replace('.',',');
+  document.getElementById('cRacha').textContent = racha();
+  let cumpl=0, marc=0;
+  for(let i=0;i<30;i++){ const f=aISO(sumarDias(new Date(),-i)), e=(db.dias[f]||{}).estado; if(e){marc++; if(e==='bien')cumpl++;} }
+  document.getElementById('cCumpli').textContent = cumpl;
+  document.getElementById('cCumpliSub').textContent = 'de '+marc+' días marcados';
+
+  // Resumen de la semana
+  let kcalSem=0, diasCon=0;
+  for(let i=0;i<7;i++){ const f=aISO(sumarDias(new Date(),-i)); const t=totalDia(f); if(t.kcal>0){kcalSem+=t.kcal; diasCon++;} }
+  const prom = diasCon ? Math.round(kcalSem/diasCon) : 0;
+  document.getElementById('resumenSemana').innerHTML = diasCon
+    ? `<b style="font-family:var(--display);font-size:20px">${prom} kcal</b> de promedio en los últimos ${diasCon} días con registro.<br><span style="color:var(--tenue);font-size:13px">Tope diario: ${db.cfg.kcalTope} kcal · déficit estimado: ${Math.round((db.cfg.kcalTope-prom))} kcal/día</span>`
+    : '<span class="vacio">Registrá algunas comidas y acá vas a ver tu promedio semanal.</span>';
+
+  dibujarGrafico();
+}
+
+function dibujarGrafico(){
+  const svg=document.getElementById('svgPeso');
+  const ini=deISO(db.cfg.fechaInicio), fin=fechaObjetivo();
+  const pi=Number(db.cfg.pesoInicial), po=Number(db.cfg.pesoObjetivo);
+  const datos=pesosOrdenados();
+  const W=320,H=170,ml=34,mr=8,mt=10,mb=20;
+  const kgs=[pi,po].concat(datos.map(d=>d.kg));
+  let max=Math.max(...kgs)+1, min=Math.min(...kgs)-1;
+  const x=f=>ml+(difDias(ini,deISO(f))/Math.max(1,difDias(ini,fin)))*(W-ml-mr);
+  const y=k=>mt+((max-k)/(max-min))*(H-mt-mb);
+  let s='';
+  // Eje
+  [max, (max+min)/2, min].forEach(k=>{
+    s+=`<line x1="${ml}" y1="${y(k)}" x2="${W-mr}" y2="${y(k)}" stroke="rgba(237,234,224,.10)"/>`;
+    s+=`<text x="0" y="${y(k)+4}" fill="#8FA398" font-size="10" font-family="Karla,sans-serif">${k.toFixed(0)}</text>`;
+  });
+  // Línea del plan
+  s+=`<line x1="${x(db.cfg.fechaInicio)}" y1="${y(pi)}" x2="${x(aISO(fin))}" y2="${y(po)}" stroke="#8FA398" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+  s+=`<text x="${W-mr}" y="${y(po)-6}" fill="#8FA398" font-size="10" text-anchor="end" font-family="Karla,sans-serif">plan</text>`;
+  // Línea real
+  if(datos.length){
+    const pts=datos.map(d=>`${x(d.f)},${y(d.kg)}`).join(' ');
+    s+=`<polyline points="${pts}" fill="none" stroke="#F2C14E" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+    datos.forEach(d=>{ s+=`<circle cx="${x(d.f)}" cy="${y(d.kg)}" r="3" fill="#F2C14E"/>`; });
+    const u=datos[datos.length-1];
+    s+=`<text x="${x(u.f)}" y="${y(u.kg)-9}" fill="#EDEAE0" font-size="11" text-anchor="middle" font-family="Karla,sans-serif">${u.kg}</text>`;
+  }
+  s+=`<text x="${ml}" y="${H-4}" fill="#8FA398" font-size="10" font-family="Karla,sans-serif">${fechaCorta(db.cfg.fechaInicio)}</text>`;
+  s+=`<text x="${W-mr}" y="${H-4}" fill="#8FA398" font-size="10" text-anchor="end" font-family="Karla,sans-serif">${fechaCorta(aISO(fin))}</text>`;
+  svg.innerHTML=s;
+}
+
+function pintarAvisoClave(){
+  const c=document.getElementById('avisoClave');
+  c.innerHTML = db.cfg.apiKey ? '' :
+    `<div class="aviso"><b>Falta tu clave de Gemini</b>El coach no puede responder hasta que la pegues en Ajustes (⚙, arriba a la derecha). El calendario y el registro funcionan igual.</div>`;
+}
+
+/* ============ NAVEGACIÓN ============ */
+function verVista(id, btn){
+  document.querySelectorAll('.vista').forEach(v=>v.classList.remove('activa'));
+  document.getElementById('v-'+id).classList.add('activa');
+  document.querySelectorAll('.solapas button').forEach(b=>b.setAttribute('aria-selected','false'));
+  btn.setAttribute('aria-selected','true');
+  document.getElementById('barraEscribir').style.display = id==='coach' ? 'flex' : 'none';
+  document.body.style.paddingBottom = id==='coach' ? '80px' : '30px';
+  if(id==='coach') setTimeout(()=>{const c=document.getElementById('chat'); c.scrollIntoView({block:'end'});},50);
+}
+function moverMes(n){ mesVisible=sumarMeses(mesVisible,n); pintarCalendario(); }
+
+/* ============ HOJA INFERIOR ============ */
+function abrirHoja(html){
+  document.getElementById('hoja').innerHTML=html;
+  document.getElementById('hoja').classList.add('abierta');
+  document.getElementById('fondo').classList.add('abierto');
+}
+function cerrarHoja(){
+  document.getElementById('hoja').classList.remove('abierta');
+  document.getElementById('fondo').classList.remove('abierto');
+}
+
+function abrirDia(f){
+  const d=db.dias[f]||{}, t=totalDia(f), p=db.pesos[f];
+  const fecha=deISO(f);
+  abrirHoja(`
+    <h3>${fecha.getDate()} de ${MESES[fecha.getMonth()]}</h3>
+    <div class="sub">${t.kcal? Math.round(t.kcal)+' kcal registradas' : 'sin comidas registradas'}${p? ' · '+p+' kg':''}</div>
+    <div class="estados">
+      <button data-e="bien" data-sel="${d.estado==='bien'?1:0}" onclick="marcarDia('${f}','bien')">Cumplí</button>
+      <button data-e="zafe" data-sel="${d.estado==='zafe'?1:0}" onclick="marcarDia('${f}','zafe')">Zafé</button>
+      <button data-e="mal"  data-sel="${d.estado==='mal'?1:0}"  onclick="marcarDia('${f}','mal')">Me mandé</button>
+    </div>
+    <div class="dos">
+      <div class="campo"><label>Peso del día (kg)</label><input type="number" step="0.1" inputmode="decimal" id="hPeso" value="${p!==undefined?p:''}" placeholder="—"></div>
+      <div class="campo"><label>Entrenamiento</label>
+        <select id="hEntreno">
+          <option value="">—</option>
+          <option value="fuerza" ${d.entreno==='fuerza'?'selected':''}>Fuerza</option>
+          <option value="pasos" ${d.entreno==='pasos'?'selected':''}>Solo caminata</option>
+          <option value="descanso" ${d.entreno==='descanso'?'selected':''}>Descanso</option>
+        </select></div>
+    </div>
+    <div class="campo"><label>Nota</label><textarea id="hNota" placeholder="Qué pasó, cómo te sentiste, qué comiste de más...">${esc(d.nota||'')}</textarea></div>
+    <button class="cerrar" onclick="guardarDia('${f}')">Guardar el día</button>
+    ${d.estado?`<button class="link" onclick="borrarDia('${f}')">Borrar la marca de este día</button>`:''}
+  `);
+}
+function marcarDia(f,e){
+  db.dias[f]=Object.assign({}, db.dias[f], {estado:e});
+  document.querySelectorAll('.estados button').forEach(b=>b.setAttribute('data-sel', b.dataset.e===e?'1':'0'));
+  guardar(); pintarCalendario(); pintarTira(); pintarProgreso();
+  festejar(e);
+}
+
+/* Mensaje que aparece cada vez que marcás un día */
+let relojBrindis=null;
+function festejar(estado){
+  const faltanDias=Math.max(0, difDias(new Date(), fechaObjetivo()));
+  const faltanKg=Math.max(0, pesoHoy()-Number(db.cfg.pesoObjetivo));
+  const d=n=>n===1?'1 día':n+' días';
+  const r=racha();
+  let titulo, texto;
+
+  if(estado==='bien'){
+    titulo='Día cumplido';
+    texto = (r>1 ? `Van ${d(r)} seguidos. ` : '') +
+      `Te faltan ${d(faltanDias)} y ${faltanKg.toFixed(1).replace('.',',')} kg para la meta.`;
+  } else if(estado==='zafe'){
+    titulo='Zafaste, y cuenta';
+    texto = `No fue perfecto pero no rompiste nada. Quedan ${d(faltanDias)} para llegar a los ${db.cfg.pesoObjetivo} kg.`;
+  } else {
+    titulo='No importa';
+    texto = `Igual sumaste un día: ahora te faltan solo ${d(faltanDias)}. Un día no define el semestre, mañana volvés al carril.`;
+  }
+
+  const el=document.getElementById('brindis');
+  el.className='brindis '+estado;
+  el.innerHTML=`<b>${titulo}</b><span>${texto}</span>`;
+  requestAnimationFrame(()=>el.classList.add('arriba'));
+  clearTimeout(relojBrindis);
+  relojBrindis=setTimeout(()=>el.classList.remove('arriba'), 4800);
+}
+function guardarDia(f){
+  const p=document.getElementById('hPeso').value;
+  const n=document.getElementById('hNota').value.trim();
+  const en=document.getElementById('hEntreno').value;
+  db.dias[f]=Object.assign({}, db.dias[f], {nota:n, entreno:en});
+  if(p!=='' && !isNaN(p)) db.pesos[f]=Number(p); else delete db.pesos[f];
+  guardar(); cerrarHoja(); pintarTodo();
+}
+function borrarDia(f){ delete db.dias[f]; guardar(); cerrarHoja(); pintarTodo(); }
+
+function abrirAjustes(){
+  const c=db.cfg;
+  abrirHoja(`
+    <h3>Ajustes</h3><div class="sub">Todo se guarda solo en este teléfono.</div>
+    <div class="campo"><label>Clave de la API de Gemini</label><input type="password" id="aKey" value="${esc(c.apiKey)}" placeholder="Pegala acá"></div>
+    <div class="campo"><label>Modelo</label><input type="text" id="aModelo" value="${esc(c.modelo)}"></div>
+    <div class="dos">
+      <div class="campo"><label>Peso inicial (kg)</label><input type="number" step="0.1" inputmode="decimal" id="aIni" value="${c.pesoInicial}"></div>
+      <div class="campo"><label>Peso objetivo (kg)</label><input type="number" step="0.1" inputmode="decimal" id="aObj" value="${c.pesoObjetivo}"></div>
+    </div>
+    <div class="dos">
+      <div class="campo"><label>Arranque</label><input type="date" id="aFecha" value="${c.fechaInicio}"></div>
+      <div class="campo"><label>Plazo (meses)</label><input type="number" id="aMeses" value="${c.meses}"></div>
+    </div>
+    <div class="dos">
+      <div class="campo"><label>Tope diario (kcal)</label><input type="number" id="aKcal" value="${c.kcalTope}"></div>
+      <div class="campo"><label>Proteína diaria (g)</label><input type="number" id="aProt" value="${c.protObjetivo}"></div>
+    </div>
+    <div class="dos">
+      <div class="campo"><label>Carbos (g) — vacío = auto</label><input type="number" id="aCarb" value="${c.carbObjetivo||''}" placeholder="auto: ${objetivos().carb} g"></div>
+      <div class="campo"><label>Grasas (g) — vacío = auto</label><input type="number" id="aGras" value="${c.grasObjetivo||''}" placeholder="auto: ${objetivos().gras} g"></div>
+    </div>
+    <button class="link" style="width:100%;text-align:center;border:1px solid var(--linea);border-radius:12px;padding:11px" onclick="abrirCalculadora()">🧮 Calculá tu meta según tu cuerpo</button>
+    <button class="cerrar" onclick="guardarAjustes()">Guardar ajustes</button>
+    <div style="display:flex;gap:16px;justify-content:center;margin-top:6px">
+      <button class="link" onclick="exportar()">Descargar copia</button>
+      <button class="link" onclick="document.getElementById('archivoBackup').click()">Restaurar copia</button>
+      <button class="link" onclick="borrarTodo()">Borrar todo</button>
+    </div>
+    <input type="file" id="archivoBackup" accept="application/json" style="display:none" onchange="importar(this)">
+
+    <div class="rotulo">Google Drive</div>
+    ${driveDisponible() ? `
+      <div class="bloque">
+        <div id="driveEstado" style="font-size:13.5px;color:var(--tenue)">Cargando…</div>
+        <div class="dos" style="margin-top:10px">
+          <button class="acc" style="text-align:center" onclick="conectarDrive()"><b>Conectar</b><span>o reconectar</span></button>
+          <button class="acc" style="text-align:center" onclick="sincronizarDrive(true)"><b>Sincronizar ya</b><span>subir/bajar ahora</span></button>
+        </div>
+        <button class="link" onclick="desconectarDrive()">Desconectar este dispositivo</button>
+      </div>
+      <div class="sub">Cada vez que anotás algo, se sube solo unos segundos después. Al abrir la app en otro dispositivo, tocá "Conectar" con la misma cuenta de Google.</div>
+    ` : `
+      <div class="sub">Todavía no está configurado. Necesita: 1) alojar este archivo en una dirección web (no sirve abrirlo como archivo local), y 2) crear una credencial de Google gratis. Pedile a la IA que te arme los pasos si querés hacerlo.</div>
+    `}
+  `);
+  if(driveDisponible()) pintarEstadoDriveInicial();
+}
+function guardarAjustes(){
+  const v=id=>document.getElementById(id).value;
+  db.cfg.apiKey=v('aKey').trim(); db.cfg.modelo=v('aModelo').trim()||'gemini-3.6-flash';
+  db.cfg.pesoInicial=Number(v('aIni'))||131; db.cfg.pesoObjetivo=Number(v('aObj'))||110;
+  db.cfg.fechaInicio=v('aFecha')||hoyISO(); db.cfg.meses=Number(v('aMeses'))||6;
+  db.cfg.kcalTope=Number(v('aKcal'))||2600; db.cfg.protObjetivo=Number(v('aProt'))||190;
+  db.cfg.carbObjetivo=Number(v('aCarb'))||0; db.cfg.grasObjetivo=Number(v('aGras'))||0;
+  guardar(); cerrarHoja(); pintarTodo();
+}
+function exportar(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));
+  a.download='davo-coach-'+hoyISO()+'.json'; a.click();
+}
+function importar(input){
+  const f=input.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{ db=Object.assign(POR_DEFECTO(), JSON.parse(r.result)); guardar(); cerrarHoja(); pintarTodo(); pintarChat(); }
+    catch(e){ alert('Ese archivo no es una copia válida.'); } };
+  r.readAsText(f);
+}
+function borrarTodo(){
+  if(confirm('Se borran todos los pesajes, comidas y días marcados. ¿Seguimos?')){
+    db=POR_DEFECTO(); guardar(); cerrarHoja(); pintarTodo(); pintarChat();
+  }
+}
+
+/* ============ REGISTROS ============ */
+function registrarPeso(){
+  const p=prompt('¿Cuánto pesás hoy? (kg)');
+  if(p===null) return;
+  const n=Number(String(p).replace(',','.'));
+  if(isNaN(n)||n<30||n>350){ alert('Poné un número de kilos válido.'); return; }
+  db.pesos[hoyISO()]=n; guardar(); pintarTodo();
+  if(db.cfg.apiKey) enviarAlCoach(`Me pesé: ${n} kg.`);
+}
+function anotarComida(){
+  const t=prompt('¿Qué comiste? (ej: 2 milanesas de carne con puré y un pan)');
+  if(!t) return;
+  enviarAlCoach(`Comí: ${t}. Estimá calorías y macros y registralo.`);
+  verVista('coach', document.querySelectorAll('.solapas button')[4]);
+}
+function pedirCompensar(){
+  const t=totalDia(hoyISO());
+  enviarAlCoach(`Hoy llevo ${Math.round(t.kcal)} kcal de ${db.cfg.kcalTope}. Me pasé o estoy al límite: armame cómo compensar entre lo que me queda de comidas, el entrenamiento y los próximos días.`);
+  verVista('coach', document.querySelectorAll('.solapas button')[4]);
+}
+function agregarComida(c){
+  const f=hoyISO();
+  if(!db.comidas[f]) db.comidas[f]=[];
+  const ahora=new Date();
+  db.comidas[f].push({desc:c.desc||'Comida', kcal:+c.kcal||0, prot:+c.prot||0, carb:+c.carb||0, gras:+c.gras||0,
+                      hora:dosDig(ahora.getHours())+':'+dosDig(ahora.getMinutes())});
+  guardar(); pintarHoy(); pintarMomento(); pintarProgreso();
+}
+function borrarComida(i){ db.comidas[hoyISO()].splice(i,1); guardar(); pintarHoy(); pintarMomento(); pintarProgreso(); }
+
+/* ============ CHAT ============ */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+
+function pintarChat(){
+  const c=document.getElementById('chat');
+  c.innerHTML = db.chat.length
+    ? db.chat.map(m=>`<div class="msj ${m.role==='user'?'yo':'coach'}">${esc(m.text)}</div>`).join('')
+    : '<div class="msj nota">Contale cómo venís, mandale una foto del plato o preguntale lo que quieras.</div>';
+  c.scrollTop=c.scrollHeight;
+  window.scrollTo(0, document.body.scrollHeight);
+}
+function agregarMsj(text, role, guardarlo=true){
+  if(guardarlo){ db.chat.push({role, text}); if(db.chat.length>120) db.chat=db.chat.slice(-120); guardar(); }
+  pintarChat();
+}
+
+function instruccionSistema(){
+  const act=pesoHoy(), t=totalDia(hoyISO()), fin=aISO(fechaObjetivo());
+  const rut=db.rutina[new Date().getDay()]||{nombre:'Descanso', ejercicios:[]};
+  const entr=db.entrenos[hoyISO()]||{modo:'gym'};
+  const o=objetivos();
+  const ult7=[];
+  for(let i=1;i<=7;i++){ const f=aISO(sumarDias(new Date(),-i)); const e=(db.dias[f]||{}).estado; if(e) ult7.push(fechaCorta(f)+': '+e); }
+  return `Sos el coach de nutrición y entrenamiento de Davo. Hablás en español rioplatense, de vos, directo, cálido y sin sermones. Respuestas cortas: 3 a 6 líneas, sin listas largas salvo que te las pida.
+
+PERFIL: 1,86 m. Arrancó en ${db.cfg.pesoInicial} kg. Entrena fuerza 4 veces por semana y camina 10.000 pasos por día. Tope: ${db.cfg.kcalTope} kcal diarias. Come pan todos los días, pastas 3 veces por semana, carne de vaca, cerdo, arroz y papa. NO come pollo ni pescado: nunca se lo sugieras, buscá siempre alternativas con lo que sí come (carne vacuna magra, cerdo magro, huevo, lácteos, legumbres).
+
+SITUACIÓN HOY (${hoyISO()}, son las ${dosDig(new Date().getHours())}:${dosDig(new Date().getMinutes())}, momento del día: ${momentoActual().id}): pesa ${act} kg, objetivo ${db.cfg.pesoObjetivo} kg para el ${fin}. Le faltan ${(act-db.cfg.pesoObjetivo).toFixed(1)} kg en ${difDias(new Date(), fechaObjetivo())} días. Hoy lleva ${Math.round(t.kcal)} de ${db.cfg.kcalTope} kcal y ${Math.round(t.prot)} de ${db.cfg.protObjetivo} g de proteína. Racha actual: ${racha()} días. Últimos días marcados: ${ult7.join(', ')||'sin datos'}.
+Entrenamiento de hoy: ${rut.nombre}${entr.modo==='casa'?' (lo va a hacer en casa, sin máquinas)':''}. Ejercicios: ${(rut.ejercicios||[]).map(x=>entr.modo==='casa'?x.casa:x.gym).join('; ')}.
+Objetivos de macros del día: ${o.prot} g de proteína, ${o.carb} g de carbos, ${o.gras} g de grasas. Comidas que le quedan hoy: ${comidasQueFaltan().map(x=>x.txt.toLowerCase()).join(', ')||'ninguna'}.
+
+Cuando le propongas comida, ajustala al momento del día y a lo que le queda de presupuesto, con porciones concretas en gramos, no en "un plato" ni "una porcion". Si te pregunta por el entrenamiento y no llega al gimnasio, dale la version casera con lo que hay en una casa (mochila cargada, bidones, sillas, escalones).
+
+REGLA DE REGISTRO: cada vez que estimes una comida (por foto o por descripción), terminá SIEMPRE el mensaje con un bloque exactamente así, y nada después:
+\`\`\`json
+{"registrar":true,"desc":"nombre corto de la comida","kcal":0,"prot":0,"carb":0,"gras":0}
+\`\`\`
+Si el mensaje no es sobre una comida, no incluyas ningún JSON. Nunca menciones el JSON ni el sistema de registro en tu texto.`;
+}
+
+function contenidosParaAPI(extra){
+  const hist = db.chat.slice(-20).map(m=>({role:m.role==='user'?'user':'model', parts:[{text:m.text}]}));
+  if(extra) hist.push(extra);
+  return hist;
+}
+
+async function llamarGemini(extra){
+  if(!db.cfg.apiKey){ agregarMsj('Falta cargar la clave de Gemini en Ajustes (⚙).','model',false); return; }
+  if(ocupado) return;
+  ocupado=true;
+  document.getElementById('btnEnviar').disabled=true;
+  const chat=document.getElementById('chat');
+  const esperando=document.createElement('div');
+  esperando.className='msj nota'; esperando.textContent='pensando…';
+  chat.appendChild(esperando); chat.scrollTop=chat.scrollHeight;
+
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${db.cfg.modelo}:generateContent?key=${encodeURIComponent(db.cfg.apiKey)}`;
+  try{
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ system_instruction:{parts:[{text:instruccionSistema()}]}, contents:contenidosParaAPI(extra) })});
+    const data=await res.json();
+    esperando.remove();
+    if(data.error){ agregarMsj('No pude responder: '+data.error.message,'model',false); }
+    else{
+      let texto=(data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('').trim();
+      const reg=extraerRegistro(texto);
+      if(reg){ texto=texto.replace(/```json[\s\S]*?```/g,'').trim(); agregarComida(reg); }
+      agregarMsj(texto||'(sin respuesta)','model');
+      if(reg){ agregarMsj(`✔ Anotado: ${reg.desc} · ${Math.round(reg.kcal)} kcal`,'model',false); }
+    }
+  }catch(e){
+    esperando.remove();
+    agregarMsj('Se cortó la conexión. Fijate el internet y volvé a intentar.','model',false);
+  }finally{
+    ocupado=false; document.getElementById('btnEnviar').disabled=false;
+    pintarHoy(); pintarProgreso();
+  }
+}
+
+function extraerRegistro(texto){
+  const m=texto.match(/```json\s*([\s\S]*?)```/);
+  if(!m) return null;
+  try{ const o=JSON.parse(m[1]); return o.registrar && o.kcal ? o : null; }catch(e){ return null; }
+}
+
+function enviarAlCoach(texto){
+  agregarMsj(texto,'user');
+  llamarGemini();
+}
+function mandarTexto(){
+  const i=document.getElementById('entrada');
+  const t=i.value.trim(); if(!t) return;
+  i.value=''; enviarAlCoach(t);
+}
+
+/* ============ FOTO ============ */
+function comprimir(file, listo){
+  const lector=new FileReader();
+  lector.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=1024, factor=Math.min(1, max/Math.max(img.width,img.height));
+      const cv=document.createElement('canvas');
+      cv.width=Math.round(img.width*factor); cv.height=Math.round(img.height*factor);
+      cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+      listo(cv.toDataURL('image/jpeg',0.8).split(',')[1]);
+    };
+    img.src=lector.result;
+  };
+  lector.readAsDataURL(file);
+}
+function mandarFoto(){
+  const input=document.getElementById('archivoFoto');
+  if(!input.files.length) return;
+  comprimir(input.files[0], b64=>{
+    verVista('coach', document.querySelectorAll('.solapas button')[4]);
+    agregarMsj('📷 Foto del plato','user');
+    llamarGemini({role:'user', parts:[
+      {text:'Esta es la foto de lo que estoy por comer. Estimá porción, calorías y macros, y registralo.'},
+      {inline_data:{mime_type:'image/jpeg', data:b64}}
+    ]});
+    input.value='';
+  });
+}
+
+/* ============ LLAMADA PUNTUAL (fuera del chat) ============ */
+async function geminiUnaVez(instruccion, partes){
+  if(!db.cfg.apiKey){ alert('Cargá primero la clave de Gemini en Ajustes (⚙).'); return null; }
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${db.cfg.modelo}:generateContent?key=${encodeURIComponent(db.cfg.apiKey)}`;
+  try{
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      system_instruction:{parts:[{text:instruccion}]},
+      contents:[{role:'user', parts:partes}]
+    })});
+    const data=await res.json();
+    if(data.error){ alert('No pude: '+data.error.message); return null; }
+    return (data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('').trim();
+  }catch(e){ alert('Se cortó la conexión.'); return null; }
+}
+
+/* ============ MÁQUINAS DEL GIMNASIO ============ */
+function mandarMaquina(){
+  const input=document.getElementById('archivoMaquina');
+  if(!input.files.length) return;
+  comprimir(input.files[0], b64=>{ analizarMaquina(b64); input.value=''; });
+}
+async function analizarMaquina(b64){
+  const cont=document.getElementById('listaFichas');
+  cont.insertAdjacentHTML('afterbegin','<div class="ficha" id="fichaCargando"><p>Mirando la foto…</p></div>');
+  const instruccion = `Sos un entrenador de fuerza. Te mando la foto de una máquina o un elemento de gimnasio.
+Respondé en español rioplatense con ESTE formato exacto y nada más:
+Primera línea: solo el nombre de la máquina o ejercicio, sin puntos ni adjetivos.
+Después, en líneas cortas y sin viñetas de markdown:
+Trabaja: qué músculos.
+Regulación: qué asiento, respaldo o topes ajustar antes de sentarte.
+Cómo se hace: 4 pasos numerados, cortos.
+Errores: los 2 más comunes.
+Arranque: series, repeticiones y carga orientativa para alguien de ${pesoHoy()} kg, 1,86 m, que entrena fuerza hace poco.
+En casa: cómo reemplazar este ejercicio sin máquinas.
+No inventes: si la foto no se entiende o no es una máquina de gimnasio, escribí solo "No se entiende" y nada más.`;
+  const texto=await geminiUnaVez(instruccion, [{text:'¿Qué máquina es y cómo se usa?'},{inline_data:{mime_type:'image/jpeg',data:b64}}]);
+  document.getElementById('fichaCargando')?.remove();
+  if(!texto) return;
+  if(/^no se entiende/i.test(texto)){ alert('No se llegó a ver bien la máquina. Probá de nuevo, más de frente y con la etiqueta visible.'); return; }
+  const lineas=texto.split('\n').filter(l=>l.trim());
+  const nombre=lineas[0].replace(/^[#*\-\s]+/,'').replace(/[.:]+$/,'').slice(0,60);
+  db.fichas[nombre]={texto:lineas.slice(1).join('\n').trim(), fecha:hoyISO()};
+  guardar(); pintarFichas();
+}
+
+/* ============ RUTINA DESDE FOTO ============ */
+function mandarRutina(){
+  const input=document.getElementById('archivoRutina');
+  if(!input.files.length) return;
+  comprimir(input.files[0], b64=>{ leerRutina(b64); input.value=''; });
+}
+async function leerRutina(b64){
+  const cont=document.getElementById('rutinaHoy');
+  cont.insertAdjacentHTML('afterbegin','<p id="rutCargando" style="color:var(--tenue)">Leyendo la rutina…</p>');
+  const instruccion=`Te mando la foto de una rutina de gimnasio escrita a mano, impresa o en captura de pantalla. Leela y devolvé SOLO un JSON, sin texto alrededor ni markdown, con este formato exacto:
+{"dias":[{"dia":1,"nombre":"Pecho y espalda","ejercicios":[{"gym":"Press plano con barra","casa":"Flexiones con las manos en la mesada","series":"4 × 10"}]}]}
+"dia" es el número de día de la semana: 1 lunes, 2 martes, 3 miércoles, 4 jueves, 5 viernes, 6 sábado, 0 domingo. Si la rutina dice "día 1, día 2" sin nombrar el día de la semana, asumí lunes, martes, jueves y viernes para cuatro días de fuerza.
+El campo "casa" lo completás vos: el reemplazo más parecido de ese ejercicio sin máquinas ni mancuernas, usando mochila cargada, bidones, sillas, escalones o el peso del cuerpo. Nunca lo dejes vacío.
+Si la foto no es una rutina, devolvé {"dias":[]}.`;
+  const texto=await geminiUnaVez(instruccion, [{text:'Pasá esta rutina a JSON.'},{inline_data:{mime_type:'image/jpeg',data:b64}}]);
+  document.getElementById('rutCargando')?.remove();
+  if(!texto) return;
+  try{
+    const o=JSON.parse(texto.replace(/```json|```/g,'').trim());
+    if(!o.dias||!o.dias.length){ alert('No pude leer una rutina en esa foto. Probá con más luz o cargala a mano.'); return; }
+    o.dias.forEach(d=>{
+      if(d.dia===undefined||!d.ejercicios) return;
+      db.rutina[d.dia]={nombre:d.nombre||'Entrenamiento', ejercicios:d.ejercicios.map(x=>({
+        gym:x.gym||'', casa:x.casa||x.gym||'', series:x.series||''
+      }))};
+    });
+    guardar(); pintarEntreno(); pintarMomento();
+    alert('Rutina cargada: '+o.dias.map(d=>d.nombre).join(', ')+'.\n\nRevisala y corregí lo que haga falta con "Editar a mano".');
+  }catch(e){ alert('No pude interpretar la rutina. Probá con una foto más nítida.'); }
+}
+async function generarCaseras(){
+  const dia=new Date().getDay(), r=db.rutina[dia];
+  if(!r||!r.ejercicios.length){ alert('Hoy no hay ejercicios cargados.'); return; }
+  if(!db.cfg.equipoCasa){
+    const eq=prompt('¿Qué tenés en casa para entrenar? Contá los kilos si sabés (te lo va a preguntar una sola vez).', 'Mochila hasta 15kg, bidones de 5 y 8 litros, una silla firme, escalón de la entrada');
+    if(eq===null) return;
+    db.cfg.equipoCasa=eq.trim(); guardar();
+  }
+  const texto=await geminiUnaVez(
+    `Para cada ejercicio de gimnasio que te pasen, devolvé el reemplazo casero más parecido usando SOLO esto que la persona tiene disponible en su casa: ${db.cfg.equipoCasa}. Si con eso no alcanza para imitar el ejercicio, decilo y proponé la variante más exigente posible con el peso del propio cuerpo. Devolvé SOLO un JSON, sin texto alrededor: {"casa":["reemplazo 1","reemplazo 2"]} en el mismo orden que te los mandé.`,
+    [{text:r.ejercicios.map(x=>x.gym).join('\n')}]);
+  if(!texto) return;
+  try{
+    const o=JSON.parse(texto.replace(/```json|```/g,'').trim());
+    r.ejercicios.forEach((x,i)=>{ if(o.casa[i]) x.casa=o.casa[i]; });
+    guardar(); pintarEntreno();
+    alert('Listo. Tocá "No llego, en casa" para ver la versión casera.');
+  }catch(e){ alert('No pude armarlas. Probá de nuevo.'); }
+}
+
+/* ============ VOZ ============ */
+let reconocedor=null;
+function dictar(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const btn=document.getElementById('btnVoz');
+  if(!SR){ alert('Este navegador no permite dictado. Usá el micrófono del teclado del teléfono, funciona igual.'); return; }
+  if(reconocedor){ reconocedor.stop(); return; }
+  reconocedor=new SR();
+  reconocedor.lang='es-AR';
+  reconocedor.interimResults=true;
+  reconocedor.continuous=false;
+  const entrada=document.getElementById('entrada');
+  const previo=entrada.value ? entrada.value+' ' : '';
+  btn.classList.add('grabando');
+  reconocedor.onresult=ev=>{
+    let texto='';
+    for(let i=0;i<ev.results.length;i++) texto+=ev.results[i][0].transcript;
+    entrada.value=previo+texto;
+  };
+  reconocedor.onerror=ev=>{
+    if(ev.error==='not-allowed') alert('Tenés que darle permiso al micrófono para dictar.');
+  };
+  reconocedor.onend=()=>{ btn.classList.remove('grabando'); reconocedor=null; entrada.focus(); };
+  reconocedor.start();
+}
+
+/* ============ ARRANQUE ============ */
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+pintarTodo();
+pintarChat();
+</script>
+</body>
+</html>
