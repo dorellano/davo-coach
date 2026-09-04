@@ -221,6 +221,39 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 .reparto{font-size:13px;color:var(--tenue);margin-top:8px;padding-top:9px;border-top:1px solid var(--linea)}
 .reparto b{color:var(--tiza)}
 .macro b em{font-style:normal;color:var(--tenue);font-size:14px}
+/* ---------- El botón (antojos) ---------- */
+.panel-boton{background:var(--tabla);border-radius:14px;padding:15px 16px 14px;margin-bottom:10px;position:relative;overflow:hidden}
+.panel-boton .titulin{font-family:var(--display);text-transform:uppercase;letter-spacing:.14em;font-size:12px;color:var(--tenue);display:flex;justify-content:space-between;align-items:center}
+.panel-boton .titulin em{font-style:normal;color:var(--marcador)}
+.boton-marco{display:flex;flex-direction:column;align-items:center;padding:16px 0 2px}
+.boton-caja{position:relative;width:168px;height:168px}
+#botonAntojo{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;border:none;padding:0 16px;background:radial-gradient(circle at 50% 34%,#F8D77E,#F2C14E 56%,#D5A02C);color:#16241F;font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;font-size:23px;font-weight:700;line-height:.95;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;box-shadow:0 12px 30px rgba(242,193,78,.25),inset 0 -7px 16px rgba(0,0,0,.18);touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .12s ease,background .4s ease;z-index:3}
+#botonAntojo small{font-family:var(--texto);text-transform:none;letter-spacing:0;font-size:10.5px;font-weight:400;line-height:1.3;color:rgba(22,36,31,.72)}
+#botonAntojo.apretado{transform:scale(.9)}
+#botonAntojo.respirando{background:radial-gradient(circle at 50% 34%,#B0E0A6,#7BC96F 56%,#4E9B45)}
+.onda{position:absolute;inset:0;border-radius:50%;border:2px solid var(--marcador);pointer-events:none;z-index:1;animation:expandir .8s ease-out forwards}
+@keyframes expandir{from{transform:scale(1);opacity:.75}to{transform:scale(2.15);opacity:0}}
+.anillo{position:absolute;inset:0;border-radius:50%;border:3px solid rgba(123,201,111,.55);pointer-events:none;z-index:4;opacity:0;transform:scale(.72);transition:transform 4s linear,opacity .3s ease}
+.anillo.on{opacity:1}
+.destello{position:absolute;inset:0;background:radial-gradient(circle at 50% 42%,rgba(242,193,78,.6),transparent 62%);pointer-events:none;z-index:5;animation:destellar .8s ease-out forwards}
+@keyframes destellar{from{opacity:1}to{opacity:0}}
+.fase{font-family:var(--display);text-transform:uppercase;letter-spacing:.14em;font-size:13px;color:var(--ok);min-height:18px;margin-top:12px;text-align:center}
+.premio-txt{font-size:13.5px;line-height:1.45;text-align:center;margin-top:6px;min-height:40px;color:var(--tiza)}
+.premio-txt.destacado{color:var(--marcador);font-weight:600}
+.contadores{display:flex;gap:6px;margin-top:10px}
+.cont{flex:1;background:var(--pizarron);border-radius:10px;padding:9px 4px;text-align:center}
+.cont b{display:block;font-family:var(--display);font-size:23px;line-height:1;font-variant-numeric:tabular-nums}
+.cont span{font-size:9.5px;color:var(--tenue);text-transform:uppercase;letter-spacing:.05em;line-height:1.25;display:block;margin-top:3px}
+.nivel-fila{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:14px;font-size:11px;color:var(--tenue);text-transform:uppercase;letter-spacing:.1em}
+.nivel-fila b{font-family:var(--display);font-size:17px;color:var(--marcador);letter-spacing:.06em}
+.ola-caja{display:flex;align-items:center;gap:12px;background:var(--pizarron);border:1px solid rgba(123,201,111,.35);border-radius:12px;padding:10px 13px;margin-top:12px}
+.ola-caja b{font-family:var(--display);font-size:26px;color:var(--ok);font-variant-numeric:tabular-nums;line-height:1;flex:none}
+.ola-caja span{font-size:12px;color:var(--tenue);line-height:1.35}
+.salidas{display:flex;gap:7px;margin-top:10px}
+.salidas button{flex:1;background:transparent;border:1px solid var(--linea);border-radius:20px;padding:9px 8px;font-size:12px;color:var(--tenue);line-height:1.25}
+.barras14{display:flex;align-items:flex-end;gap:4px;height:62px;margin-top:10px}
+.barras14 i{flex:1;background:var(--tabla-alta);border-radius:3px 3px 0 0;min-height:3px}
+.barras14 i.hoy{background:var(--marcador)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -251,7 +284,34 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 <!-- ================= HOY ================= -->
 <section class="vista activa" id="v-hoy">
   <div id="avisoClave"></div>
+  <div class="panel-boton" id="panelBoton">
+    <div class="titulin"><span>El botón</span><em id="nivelNombre">—</em></div>
+    <div class="boton-marco">
+      <div class="boton-caja" id="botonCaja">
+        <div class="anillo" id="anillo"></div>
+        <button id="botonAntojo" aria-label="Tengo hambre: aguantar el antojo">
+          <span>Tengo<br>hambre</span>
+          <small>Tocá.<br>Mantené apretado y respiramos.</small>
+        </button>
+      </div>
+      <div class="fase" id="faseResp"></div>
+    </div>
+    <div class="premio-txt" id="premioTxt">Cuando te agarre el antojo, tocá acá antes de abrir la heladera.</div>
+    <div class="contadores">
+      <div class="cont"><b id="cAgHoy">0</b><span>hoy</span></div>
+      <div class="cont"><b id="cAgTotal">0</b><span>en total</span></div>
+      <div class="cont"><b id="cAgRacha">0</b><span>días<br>seguidos</span></div>
+      <div class="cont"><b id="cAgKg">0</b><span>kg<br>esquivados</span></div>
+    </div>
+    <div class="nivel-fila"><b id="nivelTitulo">—</b><span id="nivelFalta">—</span></div>
+    <div class="barra" style="margin-top:6px"><i id="nivelBarra" style="width:0%"></i></div>
+    <div id="olaCaja"></div>
+    <div class="salidas">
+      <button onclick="salidaSegura()">Dame algo que no rompa nada</button>
+      <button onclick="comiIgual()">Comí igual</button>
+    </div>
   <div class="momento" id="momento"></div>
+  </div>
   <div class="bloque">
     <div class="kcal-fila">
       <span class="kcal-num" id="kcalHoy">0</span>
@@ -347,6 +407,19 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
   <div class="cifras">
     <div class="cifra"><span>Racha</span><b id="cRacha">0</b><em>días seguidos sin mandarte</em></div>
     <div class="cifra"><span>Últimos 30 días</span><b id="cCumpli">0</b><em id="cCumpliSub">días cumplidos</em></div>
+  </div>
+
+  <div class="rotulo">El botón</div>
+  <div class="cifras">
+    <div class="cifra"><span>Aguantes</span><b id="pAgTotal">0</b><em>antojos que no comiste</em></div>
+    <div class="cifra"><span>Olas surfeadas</span><b id="pOlas">0</b><em>antojos que dejaste pasar enteros</em></div>
+    <div class="cifra"><span>Kcal esquivadas</span><b id="pKcal">0</b><em>estimado, no es una medición</em></div>
+    <div class="cifra"><span>Equivale a</span><b id="pKg">0</b><em>kg de grasa que no tenés que bajar</em></div>
+  </div>
+  <div class="bloque" style="margin-top:8px">
+    <div style="font-size:11px;color:var(--tenue);text-transform:uppercase;letter-spacing:.1em">Aguantes de los últimos 14 días</div>
+    <div class="barras14" id="barras14"></div>
+    <div class="barra-pie" style="margin-top:6px"><span id="ag14Izq">—</span><span id="ag14Der">—</span></div>
   </div>
   <div class="bloque" style="margin-top:8px" id="resumenSemana"></div>
 </section>
@@ -448,8 +521,10 @@ const ALIMENTOS_BASE = {
 const POR_DEFECTO = () => ({
   cfg:{ pesoInicial:131, pesoObjetivo:110, fechaInicio:hoyISO(), meses:6, kcalTope:2600, altura:1.86,
         protObjetivo:190, carbObjetivo:0, grasObjetivo:0, factorPaso:0.00055, equipoCasa:'',
-        apiKey:CLAVE_API, modelo:'gemini-3.6-flash' },
+        apiKey:CLAVE_API, modelo:'gemini-3.6-flash',
+        kcalAntojo:220, vibrar:true, sonido:!navigator.vibrate },
   pesos:{}, dias:{}, comidas:{}, chat:[],
+  aguantes:{}, olas:0, ola:null, rendidas:0, premioEn:null,
   rutina:JSON.parse(JSON.stringify(RUTINA_BASE)), entrenos:{}, fichas:{},
   alimentos:JSON.parse(JSON.stringify(ALIMENTOS_BASE)), recetas:{}
 });
@@ -516,7 +591,7 @@ function racha(){
 }
 
 /* ============ PINTAR ============ */
-function pintarTodo(){ pintarTapa(); pintarMomento(); pintarHoy(); pintarEntreno(); pintarFichas(); pintarCalendario(); pintarTira(); pintarProgreso(); pintarAvisoClave(); }
+function pintarTodo(){ pintarTapa(); pintarMomento(); pintarAguante(); pintarHoy(); pintarEntreno(); pintarFichas(); pintarCalendario(); pintarTira(); pintarProgreso(); pintarAvisoClave(); }
 
 function pintarTapa(){
   const act=pesoHoy(), ini=Number(db.cfg.pesoInicial), obj=Number(db.cfg.pesoObjetivo);
@@ -1250,6 +1325,7 @@ function pintarProgreso(){
     ? `<b style="font-family:var(--display);font-size:20px">${prom} kcal</b> de promedio en los últimos ${diasCon} días con registro.<br><span style="color:var(--tenue);font-size:13px">Tope diario: ${db.cfg.kcalTope} kcal · déficit estimado: ${Math.round((db.cfg.kcalTope-prom))} kcal/día</span>`
     : '<span class="vacio">Registrá algunas comidas y acá vas a ver tu promedio semanal.</span>';
 
+  pintarProgresoBoton();
   dibujarGrafico();
 }
 
@@ -1416,6 +1492,14 @@ function abrirAjustes(){
     </div>
     <input type="file" id="archivoBackup" accept="application/json" style="display:none" onchange="importar(this)">
 
+    <div class="rotulo">El botón</div>
+    <div class="dos">
+      <div class="campo"><label>Kcal que te ahorra cada antojo</label><input type="number" id="aAntojo" value="${c.kcalAntojo||220}"></div>
+      <div class="campo"><label>Vibración</label><select id="aVibrar"><option value="1" ${c.vibrar!==false?'selected':''}>Sí</option><option value="0" ${c.vibrar===false?'selected':''}>No</option></select></div>
+    </div>
+    <div class="campo"><label>Golpe de sonido (para iPhone, que no vibra)</label><select id="aSonido"><option value="1" ${c.sonido?'selected':''}>Sí</option><option value="0" ${!c.sonido?'selected':''}>No</option></select></div>
+    <div class="sub">El número de arriba es lo que suele costarte el antojo que te salteás (un alfajor son unas 220 kcal). Con eso la app calcula los "kg esquivados": es una estimación, no una medición.</div>
+
     <div class="rotulo">Google Drive</div>
     ${driveDisponible() ? `
       <div class="bloque">
@@ -1440,6 +1524,8 @@ function guardarAjustes(){
   db.cfg.fechaInicio=v('aFecha')||hoyISO(); db.cfg.meses=Number(v('aMeses'))||6;
   db.cfg.kcalTope=Number(v('aKcal'))||2600; db.cfg.protObjetivo=Number(v('aProt'))||190;
   db.cfg.carbObjetivo=Number(v('aCarb'))||0; db.cfg.grasObjetivo=Number(v('aGras'))||0;
+  db.cfg.kcalAntojo=Number(v('aAntojo'))||220;
+  db.cfg.vibrar=v('aVibrar')==='1'; db.cfg.sonido=v('aSonido')==='1';
   guardar(); cerrarHoja(); pintarTodo();
 }
 function exportar(){
@@ -1709,6 +1795,378 @@ async function generarCaseras(){
     alert('Listo. Tocá "No llego, en casa" para ver la versión casera.');
   }catch(e){ alert('No pude armarlas. Probá de nuevo.'); }
 }
+
+/* ============ EL BOTÓN: ANTOJOS, AGUANTE Y RACHA ============
+   La idea: cuando aparece el antojo, en vez de ir a la heladera tocás el botón.
+   El antojo no dura para siempre. Sube, hace pico y baja solo en unos minutos.
+   El botón te devuelve tres cosas en el momento: un golpe físico (la vibración),
+   un número real que sube, y un reloj que te muestra la ola bajando.
+   Ojo con lo que la app NO hace: la vibración no es endorfina ni te saca el
+   hambre por magia. Lo que corta el antojo es esperar, respirar y tener algo
+   concreto que hacer con las manos. El botón es la excusa para hacer las tres. */
+
+const OLA_MIN = 12;              // cuánto dura una ola de antojo, en minutos
+const ESPERA_AGUANTE = 25000;    // dos toques muy seguidos cuentan como uno solo
+const KCAL_POR_KG_GRASA = 7700;
+
+const NIVELES = [
+  {desde:0,   nombre:'Arrancando'},
+  {desde:10,  nombre:'Pulso firme'},
+  {desde:25,  nombre:'Aguantador'},
+  {desde:50,  nombre:'Duro de romper'},
+  {desde:100, nombre:'Piedra'},
+  {desde:200, nombre:'Máquina'},
+  {desde:400, nombre:'Leyenda'}
+];
+
+/* Salidas baratas: comida de verdad, que llena y casi no suma. */
+const SALIDAS = [
+  {desc:'Vaso grande de agua bien fría con limón', kcal:0,  prot:0,   carb:0,  gras:0},
+  {desc:'Gelatina light',                          kcal:12, prot:1,   carb:2,  gras:0},
+  {desc:'Mate, té o café con leche descremada',    kcal:60, prot:5,   carb:7,  gras:0.5},
+  {desc:'Bastones de zanahoria, apio y pepino',    kcal:40, prot:1.5, carb:8,  gras:0.2},
+  {desc:'Yogur descremado con canela',             kcal:90, prot:9,   carb:12, gras:0.4},
+  {desc:'2 claras revueltas con tomate',           kcal:90, prot:15,  carb:3,  gras:1},
+  {desc:'10 almendras',                            kcal:70, prot:2.6, carb:2.4,gras:6}
+];
+
+if(!db.aguantes) db.aguantes={};
+if(db.olas==null) db.olas=0;
+if(db.rendidas==null) db.rendidas=0;
+
+function aleatorio(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function aguantesDe(f){ return db.aguantes[f]||[]; }
+function aguantesHoy(){ return aguantesDe(hoyISO()).length; }
+function aguantesTotales(){ return Object.keys(db.aguantes).reduce((a,f)=>a+db.aguantes[f].length,0); }
+function kcalAntojo(){ return Number(db.cfg.kcalAntojo)||220; }
+function kgEsquivados(){ return aguantesTotales()*kcalAntojo()/KCAL_POR_KG_GRASA; }
+function relojMMSS(ms){ const s=Math.max(0,Math.floor(ms/1000)); return Math.floor(s/60)+':'+dosDig(s%60); }
+
+/* Días seguidos en los que tocaste el botón por lo menos una vez.
+   Igual que la racha de días cumplidos: hoy todavía no cuenta en contra. */
+function rachaAguante(){
+  let n=0, d=new Date();
+  for(let i=0;i<400;i++){
+    const hay = aguantesDe(aISO(d)).length>0;
+    if(i===0 && !hay){ d=sumarDias(d,-1); continue; }
+    if(hay){ n++; d=sumarDias(d,-1); } else break;
+  }
+  return n;
+}
+
+function nivelDe(total){
+  let act=NIVELES[0], sig=null;
+  for(let i=0;i<NIVELES.length;i++){
+    if(total>=NIVELES[i].desde){ act=NIVELES[i]; sig=NIVELES[i+1]||null; }
+  }
+  const pct = sig ? Math.min(100, ((total-act.desde)/(sig.desde-act.desde))*100) : 100;
+  return {nombre:act.nombre, siguiente:sig, pct};
+}
+
+/* ---- Lo que se siente: vibración y golpe de sonido ---- */
+function vibrar(patron){
+  if(db.cfg.vibrar===false) return;
+  try{ if(navigator.vibrate) navigator.vibrate(patron); }catch(e){}
+}
+let audioCtx=null;
+function golpe(freq, dur){
+  if(!db.cfg.sonido) return;
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC) return;
+    if(!audioCtx) audioCtx=new AC();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    const t=audioCtx.currentTime, o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.type='sine';
+    o.frequency.setValueAtTime(freq, t);
+    o.frequency.exponentialRampToValueAtTime(Math.max(25,freq*0.45), t+dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.32, t+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t); o.stop(t+dur+0.03);
+  }catch(e){}
+}
+function onda(){
+  const caja=document.getElementById('botonCaja'); if(!caja) return;
+  const o=document.createElement('div'); o.className='onda';
+  caja.appendChild(o); setTimeout(()=>o.remove(), 850);
+}
+function destello(){
+  const p=document.getElementById('panelBoton'); if(!p) return;
+  const d=document.createElement('div'); d.className='destello';
+  p.appendChild(d); setTimeout(()=>d.remove(), 850);
+}
+function mostrarPremio(texto, destacado){
+  const el=document.getElementById('premioTxt'); if(!el) return;
+  el.className='premio-txt'+(destacado?' destacado':'');
+  el.textContent=texto;
+}
+
+/* ---- El toque ---- */
+let apretadoDesde=0, relojRespirar=null;
+
+function botonAbajo(ev){
+  if(ev.cancelable) ev.preventDefault();
+  apretadoDesde=Date.now();
+  document.getElementById('botonAntojo').classList.add('apretado');
+  vibrar(18); golpe(70,.07); onda();
+  clearTimeout(relojRespirar);
+  relojRespirar=setTimeout(iniciarRespiracion, 420);
+}
+function botonArriba(ev){
+  if(!apretadoDesde) return;
+  if(ev && ev.cancelable) ev.preventDefault();
+  const seg=(Date.now()-apretadoDesde)/1000;
+  apretadoDesde=0;
+  clearTimeout(relojRespirar);
+  document.getElementById('botonAntojo').classList.remove('apretado');
+  const ciclos=terminarRespiracion();
+  registrarAguante(Math.round(seg), ciclos);
+}
+
+/* ---- Respiración guiada 4-4-6: inhalar corto, soltar largo.
+       El aire largo es lo que le baja el pulso al cuerpo y afloja el antojo. ---- */
+const FASES=[
+  {t:'Inhalá por la nariz',    ms:4000, esc:1.30, vib:[30]},
+  {t:'Sostené',                ms:4000, esc:1.30, vib:[12]},
+  {t:'Soltá por la boca, largo', ms:6000, esc:0.72, vib:[170]}
+];
+let resp=null;
+
+function iniciarRespiracion(){
+  if(resp) return;
+  resp={i:0, ciclos:0, timer:null};
+  document.getElementById('botonAntojo').classList.add('respirando');
+  document.getElementById('anillo').classList.add('on');
+  siguienteFase();
+}
+function siguienteFase(){
+  if(!resp) return;
+  if(resp.i>0 && resp.i%3===0){ resp.ciclos++; vibrar([20,60,20,60,20]); golpe(120,.12); }
+  const f=FASES[resp.i%3];
+  const anillo=document.getElementById('anillo');
+  anillo.style.transitionDuration=f.ms+'ms';
+  anillo.style.transform='scale('+f.esc+')';
+  document.getElementById('faseResp').textContent =
+    f.t + (resp.ciclos ? ' · '+resp.ciclos+(resp.ciclos===1?' vuelta':' vueltas') : '');
+  vibrar(f.vib);
+  resp.i++;
+  resp.timer=setTimeout(siguienteFase, f.ms);
+}
+function terminarRespiracion(){
+  if(!resp) return 0;
+  clearTimeout(resp.timer);
+  const c=resp.ciclos;
+  resp=null;
+  document.getElementById('botonAntojo').classList.remove('respirando');
+  const anillo=document.getElementById('anillo');
+  anillo.classList.remove('on');
+  anillo.style.transitionDuration='300ms';
+  anillo.style.transform='scale(.72)';
+  document.getElementById('faseResp').textContent='';
+  return c;
+}
+
+/* ---- El registro ---- */
+function registrarAguante(seg, ciclos){
+  const f=hoyISO(), ahora=Date.now();
+  if(!db.aguantes[f]) db.aguantes[f]=[];
+  const lista=db.aguantes[f];
+  const ultimo = lista.length ? new Date(lista[lista.length-1].t).getTime() : 0;
+
+  /* Toques muy seguidos siguen vibrando y contestando, pero no inflan el número:
+     si el contador se llena solo, deja de querer decir algo. */
+  if(ahora-ultimo < ESPERA_AGUANTE && ciclos===0 && seg<3){
+    vibrar([14]); golpe(90,.06);
+    mostrarPremio(fraseSostener(), false);
+    return;
+  }
+
+  lista.push({t:new Date().toISOString(), seg:seg, resp:ciclos>0, ciclos:ciclos});
+
+  if(!db.ola || ahora>=db.ola.fin) db.ola={inicio:ahora, fin:ahora+OLA_MIN*60000, taps:1};
+  else db.ola.taps++;
+
+  /* Premio de tanto en tanto, no siempre: no saber cuándo llega es lo que hace
+     que uno vuelva a tocar. Cae cada 4 a 8 aguantes, o cuando respiraste dos vueltas. */
+  if(db.premioEn==null) db.premioEn=aleatorio(3,6);
+  db.premioEn--;
+  const premio = db.premioEn<=0 || ciclos>=2;
+  if(premio) db.premioEn=aleatorio(4,8);
+
+  guardar();
+
+  if(premio){
+    vibrar([12,45,12,45,25,70,200]); golpe(150,.18);
+    setTimeout(()=>golpe(210,.22), 130);
+    destello();
+  } else {
+    vibrar([16,45,30]); golpe(80,.09);
+  }
+  mostrarPremio(fraseAguante(premio, ciclos), premio);
+  pintarAguante();
+  pintarProgresoBoton();
+}
+
+function fraseAguante(premio, ciclos){
+  const total=aguantesTotales(), hoy=aguantesHoy(), k=kcalAntojo();
+  const gramos=Math.round(k/KCAL_POR_KG_GRASA*1000);
+  const kg=kgEsquivados().toFixed(1).replace('.',',');
+  const faltanKg=Math.max(0, pesoHoy()-Number(db.cfg.pesoObjetivo)).toFixed(1).replace('.',',');
+  const rA=rachaAguante();
+  const elegir=a=>a[Math.floor(Math.random()*a.length)];
+
+  if(premio) return elegir([
+    `⚡ Aguante nº ${total}. Sumados, ya esquivaste ${Math.round(total*k)} kcal: ${kg} kg que no vas a tener que bajar dos veces.`,
+    `🔥 ${hoy} ${hoy===1?'aguante':'aguantes'} hoy. Este es el músculo que no se ve en el espejo y es el único que decide si llegás a los ${db.cfg.pesoObjetivo} kg.`,
+    `🏆 ${rA} ${rA===1?'día':'días'} seguidos tocando el botón en vez de la heladera. Eso ya dejó de ser fuerza de voluntad: es costumbre.`,
+    `💥 Nivel ${nivelDe(total).nombre}. Te faltan ${faltanKg} kg y cada uno de estos toques es un pedacito de eso.`
+  ]);
+
+  if(ciclos>0) return `Respiraste ${ciclos} ${ciclos===1?'vuelta completa':'vueltas completas'}. Ahí es donde el antojo se afloja en serio: el aire largo le baja el pulso al cuerpo.`;
+
+  return elegir([
+    `Anotado. Ese antojo te iba a costar unas ${k} kcal: son ${gramos} g de grasa que no tenés que bajar.`,
+    `Aguante nº ${hoy} de hoy. Dale ${OLA_MIN} minutos: el antojo sube, hace pico y baja solo.`,
+    `Llevás ${total} en total. ${kg} kg de equivalente que ya no están en el camino.`,
+    `El hambre de antojo no es hambre de comida. Tomá un vaso de agua y mirá cómo baja el reloj.`,
+    `Bien. La mano acá, no en la alacena.`,
+    `Mantené el botón apretado unos segundos y te llevo la respiración: es lo que más rápido corta el antojo.`
+  ]);
+}
+function fraseSostener(){
+  const p=['Ya lo conté hace un rato. Seguí: mantené el botón apretado y respiramos juntos.',
+           'Está contado. Ahora aguantalo unos segundos y soltá el aire largo.',
+           'Tranquilo, el reloj sigue corriendo. Falta menos de lo que parece.'];
+  return p[Math.floor(Math.random()*p.length)];
+}
+
+/* ---- La ola ---- */
+function pintarOla(){
+  const c=document.getElementById('olaCaja'); if(!c) return;
+  if(!db.ola){ c.innerHTML=''; return; }
+  c.innerHTML=`<div class="ola-caja">
+      <b id="olaRelojNum">${relojMMSS(db.ola.fin-Date.now())}</b>
+      <span>La ola está bajando. Si llegás a cero sin comer de más, te anotás una ola surfeada.${
+        db.ola.taps>1 ? ' Tocaste '+db.ola.taps+' veces en esta.' : ''}</span>
+    </div>`;
+}
+function tickOla(){
+  if(!db.ola) return;
+  const falta=db.ola.fin-Date.now();
+  if(falta<=0){ cerrarOla(); return; }
+  const n=document.getElementById('olaRelojNum');
+  if(n) n.textContent=relojMMSS(falta);
+}
+function cerrarOla(){
+  const vieja=db.ola;
+  if(!vieja) return;
+  db.ola=null;
+  db.olas=(db.olas||0)+1;
+  guardar(); pintarAguante(); pintarProgresoBoton();
+  /* Si la app estuvo cerrada mucho rato, la ola se cierra sin festejo: no sé
+     qué pasó de verdad en el medio y no quiero felicitarte de mentira. */
+  if(Date.now()-vieja.fin > OLA_MIN*60000*2) return;
+  vibrar([20,60,20,60,20,60,250]); golpe(170,.25);
+  const el=document.getElementById('brindis');
+  el.className='brindis bien';
+  el.innerHTML=`<b>La ola bajó ✓</b><span>Pasaron los ${OLA_MIN} minutos y seguís entero. ${db.olas===1?'Es tu primera ola surfeada':'Van '+db.olas+' olas surfeadas'}. Esto, repetido, es literalmente lo que te hace bajar de peso.</span>`;
+  requestAnimationFrame(()=>el.classList.add('arriba'));
+  clearTimeout(relojBrindis);
+  relojBrindis=setTimeout(()=>el.classList.remove('arriba'), 5200);
+}
+
+/* ---- Las dos salidas: una para comer barato, otra para decir la verdad ---- */
+function salidaSegura(){
+  const t=totalDia(hoyISO());
+  const resto=Math.round((Number(db.cfg.kcalTope)||2600)-t.kcal);
+  abrirHoja(`
+    <h3>Comé esto y no rompés nada</h3>
+    <div class="sub">${resto>0 ? 'Te quedan '+resto+' kcal en el día.' : 'Ya no te queda presupuesto: quedate en las primeras.'}</div>
+    ${SALIDAS.map((s,i)=>`
+      <div class="item" onclick="anotarSalida(${i})">
+        <div class="item-txt"><b>${esc(s.desc)}</b><span>${s.kcal} kcal · ${s.prot} g de proteína</span></div>
+        <span class="toca">Anotar</span>
+      </div>`).join('')}
+    <button class="cerrar" style="margin-top:14px" onclick="cerrarHoja(); pedirSalidaAlCoach()">Pedirle 3 ideas al coach</button>
+  `);
+}
+function anotarSalida(i){
+  const s=SALIDAS[i];
+  agregarComida(s);
+  cerrarHoja();
+  vibrar([16,45,30]); golpe(80,.09);
+  festejarComida(s.desc+' · '+s.kcal+' kcal. Elegiste la salida barata.');
+}
+function pedirSalidaAlCoach(){
+  const t=totalDia(hoyISO());
+  const resto=Math.round((Number(db.cfg.kcalTope)||2600)-t.kcal);
+  enviarAlCoach(`Tengo un antojo fuerte ahora mismo. Me quedan ${resto} kcal en el día. Dame 3 cosas concretas para comer YA que me llenen, que consiga en cualquier almacén o kiosco, con las calorías de cada una. Cortito y sin vueltas.`);
+  verVista('coach', document.querySelectorAll('.solapas button')[4]);
+}
+function comiIgual(){
+  db.ola=null;
+  db.rendidas=(db.rendidas||0)+1;
+  guardar(); pintarAguante();
+  vibrar([50]);
+  abrirHoja(`
+    <h3>Comiste igual</h3>
+    <div class="sub">No pasa nada. Lo que importa es que quede anotado.</div>
+    <p style="font-size:14px;line-height:1.5;margin:0 0 14px">
+      Los ${aguantesTotales()} aguantes que llevás no se borran ni se descuentan: ya los hiciste y siguen contados.
+      Un antojo que se te escapa no rompe el semestre. Lo único que lo rompe es dejar de anotar.
+    </p>
+    <button class="cerrar" onclick="cerrarHoja(); anotarComida()">Anotar qué comí</button>
+    <button class="link" style="width:100%;text-align:center" onclick="cerrarHoja()">Después lo anoto</button>
+  `);
+}
+
+/* ---- Pintar ---- */
+function pintarAguante(){
+  const panel=document.getElementById('panelBoton'); if(!panel) return;
+  const total=aguantesTotales();
+  document.getElementById('cAgHoy').textContent=aguantesHoy();
+  document.getElementById('cAgTotal').textContent=total;
+  document.getElementById('cAgRacha').textContent=rachaAguante();
+  document.getElementById('cAgKg').textContent=kgEsquivados().toFixed(1).replace('.',',');
+  const n=nivelDe(total);
+  document.getElementById('nivelNombre').textContent=n.nombre;
+  document.getElementById('nivelTitulo').textContent=n.nombre;
+  document.getElementById('nivelFalta').textContent =
+    n.siguiente ? (n.siguiente.desde-total)+' para '+n.siguiente.nombre : 'nivel máximo';
+  document.getElementById('nivelBarra').style.width=n.pct+'%';
+  pintarOla();
+}
+function pintarProgresoBoton(){
+  const el=document.getElementById('pAgTotal'); if(!el) return;
+  const total=aguantesTotales(), k=kcalAntojo();
+  el.textContent=total;
+  document.getElementById('pOlas').textContent=db.olas||0;
+  document.getElementById('pKcal').textContent=Math.round(total*k);
+  document.getElementById('pKg').textContent=kgEsquivados().toFixed(1).replace('.',',');
+  const dias=[];
+  for(let i=13;i>=0;i--){ const f=aISO(sumarDias(new Date(),-i)); dias.push({f, n:aguantesDe(f).length}); }
+  const max=Math.max(1, ...dias.map(d=>d.n));
+  document.getElementById('barras14').innerHTML=dias.map((d,i)=>
+    `<i class="${i===13?'hoy':''}" style="height:${Math.max(4,(d.n/max)*100)}%" title="${fechaCorta(d.f)}: ${d.n}"></i>`).join('');
+  document.getElementById('ag14Izq').textContent=fechaCorta(dias[0].f);
+  const suma=dias.reduce((a,d)=>a+d.n,0);
+  document.getElementById('ag14Der').textContent=suma+' aguantes en 14 días';
+}
+
+/* ---- Enchufar el botón ---- */
+(function enchufarBoton(){
+  const b=document.getElementById('botonAntojo');
+  if(!b) return;
+  b.addEventListener('pointerdown', botonAbajo);
+  b.addEventListener('pointerup', botonArriba);
+  b.addEventListener('pointercancel', botonArriba);
+  b.addEventListener('pointerleave', botonArriba);
+  b.addEventListener('contextmenu', e=>e.preventDefault());
+  setInterval(tickOla, 1000);
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) tickOla(); });
+})();
 
 /* ============ VOZ ============ */
 let reconocedor=null;
